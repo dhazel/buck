@@ -1,0 +1,13 @@
+
+first choice...
+Lengths are: [36, 0, 0, 0, 0] total: 36.8333
+Volumes are: [180.0, 0, 0, 0, 0, 0] total: 180.0
+Top diams are: [12, 0, 0, 0, 0, 0]
+Prices are: [360.000, 0.000, 0.000, 0.000, 0.000] total: 360.0
+
+second choice...
+Lengths are: [38, 0, 0, 0, 0] total: 38.8333
+Volumes are: [170.0, 0, 0, 0, 0, 0] total: 170.0
+Top diams are: [11, 0, 0, 0, 0, 0]
+Prices are: [340.000, 0.000, 0.000, 0.000, 0.000] total: 340.0
+

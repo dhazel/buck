@@ -1,0 +1,45 @@
+#!/bin/awk
+#
+#   This script parses the dependancies file and searches for unused
+#       routines
+#
+
+{
+    if($1 !~ /.asm/){
+        new_routine = $1
+        actual_routine = 0
+        # remove any trailing colon
+        if(index(new_routine,":")){
+            new_routine = substr($1,1,(length($1) - 1))
+            actual_routine = 1
+        }
+        # check for uncounted routines and repeats to count
+        for(routine in counted_routines){
+            if(counted_routines[routine] == new_routine){
+                repeat = 1
+                repeat_routine = routine
+            }
+        }
+        if(!repeat){
+            counted_routines[routine_index++] = new_routine
+            if(actual_routine){
+                actual_routines[routine_index - 1] = 1
+            }
+        }else{
+            routine_count[repeat_routine]++
+            repeat = 0
+            if(actual_routine){
+                actual_routines[repeat_routine] = 1
+            }
+        }
+    }
+}
+
+END{
+    for(routine in counted_routines){
+        if((routine_count[routine] < 1) && (actual_routines[routine])){
+            print(counted_routines[routine])
+        }
+    }
+}
+

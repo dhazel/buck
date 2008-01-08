@@ -1,0 +1,5 @@
+#!/bin/bash
+
+awk -f parse/awk.search.routine_dependancies *.asm routines/*/*.asm routines/*/*/*.asm > dependancies
+
+exit 0

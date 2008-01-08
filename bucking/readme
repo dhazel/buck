@@ -1,0 +1,54 @@
+ABOUT:
+This is the second working mock-up series (version 1.0.4) of the bucking 
+program into python. It generates all of its own files (with user input). 
+It is relatively fast, but does not use array operators from numarray or scipy,
+instead it uses lists in conventional python style; nonetheless, it still runs
+with fair speed.
+
+
+CHANGELOG:
+version 0.9 --
+    - simple text-based interface
+version 1.0 --
+    - new graphical interface
+    - updated much code for OS interoperability (not perfect yet though)
+version 1.0.1 --
+    - improved useability (simplified)
+    - should now be almost fully OS independant
+version 1.0.2 --
+    - much  new changes based on input from the first experimental user 
+          (other than me)
+    - changed the verbage used for many of the buttons and names
+    - added a simple calculator to determine price of up to five input logs
+          ( to be used for comparison purposes )
+    - changed the way the output file records log lengths
+        * now the junk log lengths are dropped off and only the lengths to be 
+            cut are listed
+version 1.0.4 --
+    - fixed a bug in how the second choice is determined. Buck lengths shorter
+        than those of the first choice had been being excluded from the second
+        choice.
+version 1.5.0 --
+    - redesigned the iterative search framework to increase flexibility and
+            robustness
+        - possible log lengths are now stored in an array rather than 
+            being determined mathematically
+        - now capable of handling different mills (eg, the framework can now
+            handle *any* possible log length rather than just multiples of 2
+            within the boundaries of 16 and 40 feet)
+            - NOTE: this is not supported by the price and volume functions yet,
+                they are still constrained to the 16-40' boundaries
+        - log priority can now be specified based on position in the array
+        - more robust, not as finnicky regarding loop conditions
+
+
+
+TO RUN:
+To run the bucking program navigate to the directory housing the program files, make the file named 'buck.py' executable (if it is not already), 
+and execute the file.
+The first run will require you to input log prices.
+
+
+NOTES:
+The program requires the python Tkinterface, or in other words the Tkinter module.
+

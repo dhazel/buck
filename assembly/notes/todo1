@@ -1,0 +1,448 @@
+
+List of emediate todos_____________________
+
+4.0
+x separate out BuckLP2 and test asm program handoff
+x   - create the special shared and LP2 include files
+x   - make BuckLP2 a stand-alone program
+x   - make hooks in BC40 to test
+x       - write special handover routine to test
+x           -> does this work, or do we need a different method?
+x               -> do we return to previous execution in the original program?
+x   - copy asm files to the shared partition
+x   - reboot to compile and test
+x write the data sharing copy over routine
+x   -> if the copy over routine can't find BC40, then have it present a short
+x       message and call AboutBuck?
+x check to make sure that all _winBtm and _winTop references are correct
+x finish testing all "untested" routines
+x fix three-column newline bug
+x   -> something more is going on than newline, code appears to be good
+x       -> got system crash on production TI86
+x       -> the laptop compiler is acting wierd
+x           -> debug this on the beast
+x put testprints in to check volume problem
+x   -> testprints is not being called, likely because of laptop compiler 
+x       problems
+x fix incorrect volume output (this is not the truncation problem) in FinDisplay
+
+
+5.0
+x change printerrors to only print the errors that occured
+x add exit options in the menus that lack them, for consistancy
+x track volume
+x   - add statistics data fields to buck_data
+x       -> store in floating point, to handle any size
+x       - total logs
+x       - total volume
+x       - total trees
+x       - total price
+x   - write statistic data clearing function
+x   - add statistics configuration in BuckSetup
+x       - enable/disable statistics
+x   - redesign results data for easy tie-in with statistics gathering
+x       - create special data structure that consolidates result data
+x       - rewrite FinDisplay and other routines to use the new structure
+x       - rewrite FinMenu to switch the display using the new structure
+x   - place statistics choice handler calls in FinMenu
+x       - create UpdateStats routine to update the stats
+x           - increment the total_trees
+x           - generate log number and add to total_logs
+x           - add sum_v to total volume
+x           - add sum_p to total price
+x fix sum_v calculation bug
+x   -> skip volumes from cull logs
+x create statistics program for handover
+x test the sum_v calculation bug fix using testprints
+x   - make sure that indexing works properly
+
+
+5.1
+x make the cursor moveable in the mill edit window
+x return from printerrors to view the results display again
+x temporarily fix copyover_data incompatibility problems in the helper programs
+
+
+5.2
+x write input function
+x   -> for integers, very simple
+x   - write number to DE
+x   - print number to screen as it is typed
+x       - check for maximum number
+x   - take input of max number
+x       - in HL 
+x   - take input of an initial keypress to start with
+x       - in A 
+x add diam max/min array to data
+x update helper programs to work with bc52
+x   - BuckLP2
+x   - BuckStat
+x   - copyover routine
+x add functionality to Buck22
+x   - simple check -- do I compute the log or not?
+x   -> can I easily get an index, or do I need to write the find function first?
+x       -> writing the find function now is a waste of time, the Buck algorithm
+x           already implements the needed functionality and is too optimized to 
+x           simply shoehorn a find function 
+x   - upgrade algorithm and functions
+x       - volatile data reseter
+x           - reset "it" to all 255's
+x       - rewrite Buck
+x           - use "it" for tracking the LCV placeholder
+x           - code optimization for the tree "middle"
+x           - re-inclusion of the iterator in main code (increments, etc)
+x           - algorithm "back-step" resets "it" to 255 rather than zero
+x           - add LCV overrun error checker
+x       - change Price2 
+x           - use the iteration tracker "it"
+x               -> can I use IX (is it preserved?)? -- yes
+x                   - use Jimi Malcolm's "destroy" to test all calls to builtins
+x                       in Volume and Price2 before "it" is required
+x       - get rid of LCV_placeholder
+x           - ErrWrongLength
+x               - replaced ErrWrongLength with ErrLCVoverrun
+x               - remove ErrWrongLength references
+x                   - PrintErrors
+x                   - ClearErrors
+x           - ResetVolatileData
+x           - Price2
+x           - buck_data.asm
+-> It is now possible to have multiple LCV entries of the same length!!!
+    -> The Buck algorithm indexes more robustly now and can handle it
+x remove ErrSwitchMill
+x   -> SwitchMill should do nothing when it receives a bad mill number
+x warn before clearing the statistics data
+x add configuration to BuckLP2
+x   - display 'c' for logs with criteria
+x   - make operations affect the criteria array
+x       - delete
+x       - insert
+x       - wipe
+x   - add 'crit' menu entry for criteria settings
+x       - make it switchable with the 'more' key
+x   - create the criteria editor
+x       - take input of index
+x           - in A
+x       - display length pair and min and max td with simple options for editing
+x           - make display for min and max td's
+x           - make min and max td's editable
+x               - write selection clearing routine
+x               - use InputInt for user input
+x           - make a lengthprice display
+x           - move PrintArrayElm into buck_subroutines_shared.asm
+x       - provide options for traversal of the criteria array
+x write find function ?
+x   -> simple find, no criteria
+x   - take input of array size
+x   - take input of array start address
+x   - take input of search value
+x   - return status, index, address
+x make sure that Price2 works with guess-compare
+x   - determine the primitive function of the Price routine
+x       - what should it do
+x           - it *has* to be very fast and simple because of its use in Buck22
+x           - it should simply be a price calculator
+x               - it should be told specifically where log price data is at
+x       - what should it not do
+x           - it should not implement any sort of find function
+x   - use the find function along with Price2 in guess-compare
+x       - this may best be wrapped in a new function to ease use
+x           - Price2standalone
+x fix Interpolate bug
+x make sure that guess-compare mode accounts for log criteria
+x consolidate code with a CriteriaPassFail function
+x change clearmenu and clearwindow to restore previous _winTop and _winBtm
+
+
+
+
+6.0
+x add tamper/piracy checking to each helper program
+x consolidate configuration data and settings more
+x clearly differentiate between defines and label references in the code
+x make criteria editor display clearer by reversing header lines
+x allow volume profiling (so user can at least see how he is cutting)
+x   -> per mill
+x       -> per log length
+x   - string variables containing the mill names
+x       - make sure that SwitchMill updates only what it needs to
+x           - add multiple modes to StatDataInit
+x               - init matrices (A == 0)
+x               - init mill names (A == 1)
+\               - check matrix initialization (A == 2)?
+\               - check mill name initialization (A == 3)?
+x           - double check that names are updated!
+x   - matrix variables stored in TIOS
+x       - one for each mill
+x           - "bcmill1", "bcmill2", "bcmill3"
+x       - .-----------------------------------------------------------------.
+x         |shippable lengths                                                |
+x         |-----------------------------------------------------------------|
+x         |tally for each length                                            |
+x         |-----------------------------------------------------------------|
+x         |total volume for each length                                     |
+x         |-----------------------------------------------------------------|
+x         |total value for each length                                      |
+x         |-----------------------------------------------------------------|
+x         |total top diameter for each length                               |
+x         |---------------.------.--------.-------.--------.-------.--------|
+x         |total... trees | logs | volume | value | length | top d | butt d |
+x         *---------------^------^--------^-------^--------^-------^--------*
+x       - TIBASIC statistics processing program, "bcstpr"
+x           - figure out how (with what editor) this should be written
+x               - VTI program editor (annoying, but works)
+x           - load data into matrixes
+x           - toggle status element in bcout to denote stale data
+x       - fill shippable lengths row when needed
+x           - when a length has changed
+x               - check on BuckLP2
+x           - when a stat matrix is empty and about to be used
+x               - check on SwitchMill
+x           - ask user yes/no
+x               -> statistics tracking could be skewed, but user has choice
+x               -> data shuffling is too much to do
+x       - remove repeat entries
+x           - LCVCompaction routine
+x               - add LCVCompact and LCVCompact_size data to buck_data.asm
+x               - design and write the routine
+x                   - use FindByte routine to do byte searches
+x                       - rewrite FindByte to use the CPIR instruction (faster)
+x                   - steal array shrinking algorythms from BuckLP2_delete
+x                       - make a generic array shrinker
+x                           - inputs:
+x                               - index to remove
+x                               - array size
+x                               - array start address
+x                       - rewrite BuckLP2_delete to use the generic shrinker
+x   - output data to TIOS via matrix, "bcout"
+x       - .-------------.-------------.-----------.----------.
+x         |state_status | mill_number | butt_diam | undoable |
+x         |-------------^-------------^-----------^----------|
+x         |lengths array                                     |
+x         |--------------------------------------------------|
+x         |volumes array                                     |
+x         |--------------------------------------------------|
+x         |prices array                                      |
+x         |--------------------------------------------------|
+x         |diameter array                                    |
+x         *--------------------------------------------------*
+x             - state_status variable
+x                   - use 0 and 1 to designate stale or fresh data
+x                       - 0 = stale data 
+x                       - 1 = fresh data
+x                   -> use state status variable to signal a data wipe?? no
+x                   -> use state status variable to signal a data undo?? no
+x           - undoable variable
+x               - 0 = not undoable, redoable
+x               - 1 = undoable, not redoable
+x           -> the undoable variable is set by bcstpr
+x       - add mill number field to the result data structure
+x           - indexed from 0
+x       - allow statistics undo
+x           - use bcout(1,4) to hold the "undoable" status variable
+x           - does not require a separate matrix
+x               - use bcout(1,4) to hold the undoable status
+x                   - update bcstun
+x                   - update bcstpr
+x                   - update bcstat
+x           - create the undo routine
+x               - check for previous undo
+x               - duplicate bcstpr, but subtract rather than add
+x                   - program name: "bcstun"
+x       - make sure that exporting works in millcompare mode
+x   - create routine to access TIOS variables simply
+x       - matrices
+x           - based on row and column
+x               - check whether requested matrix location is present
+x               - return data to OP register
+x               - write data from OP register
+x   - write routine to create TIOS matrix variables
+x       -> needed so that matrix can be restored in case it is deleted
+x   - update BuckStat
+x        - determine whether to use TIBASIC or ASM elements
+x            - TIBASIC:
+x                - quick development
+x                    - math operations are symplified
+x                - simplified development
+x                - editor is very small and difficult to use
+x                - fairly limited presentation capabilities
+x                    - can output strings and data to specific screen locations
+x            - ASM:
+x                - detailed control of the display
+x                - likely more info in a smaller screen space
+x                - can use VIM to do editing
+x                - UI coding is excruciatingly complex
+x                    - will take lots of time and head-work
+x            - considerations:
+x                - lots of math operations
+x                - lots of information to display
+x                - not much time available
+x            - perhaps draw headers with ASM and use TIBASIC for data
+x                - only if TIBASIC prog's honor previous _wintop settings
+x                - best if I can display two elements per line (check this out)
+x                - what about ASM draw routines called by TIBASIC progs?
+x                    - would have to talk via TIOS variables
+x            - use TIBASIC
+x       - use the profile system
+x           - display stored data
+x           - remove the old data areas out of bc_data
+x           - remove the ClearStats routine
+x       - clear the profiles
+x       - add undo functionality
+x       - add redo functionality
+x           - update bcstpr to be used to "redo"
+x               - check for mill missmatch (like bcstun does)
+/       - make certain stat data editable
+x   - link the new buckstat routines into BC main
+x       - bcstat
+x   - remove Handoff_BCStat
+x make CriteriaEditor navigation more intuitive
+x   - up/down rather than right/left
+x separate the Setup routines into a separate helper program
+x   -> base the separations on pricing plans
+x   - make BuckStup.asm file 
+x       - make it a fully executable module
+x   - make the subroutine file for BuckStup, buck_subroutines_stup
+x   - make sure that dependencies work properly
+x       - copyover_data
+x       - Handoff_BuckLP2
+x       - SwitchMill
+x       - BuckStart
+x       - test them all
+x   - make sure that assembly program handoff can traverse two levels
+x       -> for handing off to BuckStup to BuckLP2
+x make CriteriaEditor display "  " rather than the non-descript "0" for 
+x   nonexistant criteria
+NOTE: the duplicate-entry check in BuckLP2 is disabled!!
+/ add more shippable lengths entries
+x make stat data easily saveable, "copyable"
+x   - one copied mill
+x       -> must be initialized or this causes errors
+x           - update StatDataInit to check and initialize saved mill matrix
+x               - mill name also?
+x                   -> required for robustness of the statistics mill copy
+x                   - place check in StringCreate
+x                       - by default, throw flag and exit if string exists
+x                       - have option to force overwrite
+x                   - modify the existing StringCreate calls
+x                       - StatDataInit
+x                   - modify existing StatDataInit calls
+x                       - SwitchMill
+x                       - BC60
+x                           - add one here
+x                               - at beginning of execution, initialize 
+x                                   everything
+x                       - BCStup
+x       - "bcsavem": saved mill matrix
+x       - "bcsaven": saved mill name
+x       - update bcstat
+x           - save matrix and name
+x           - display saved data
+x   - offer the option of a pensil and paper
+x include trim in display in BuckLP2
+x   -> note that this only works in the current code with the current 
+x       duplicate-entry check disabled
+- in guess mode, start with the user's guess as the best price
+    -> his should speed things up significantly
+/ fix regression in BuckLP2 display (bottom line)
+/   -> this display problem only happens when BuckLP2 is run standalone
+x organize the code better
+x   - update the include directives in programs
+x       - create a dependancy autogeneration script using awk
+x   - fine grained include files
+x       - by individual function
+x           - organize via subdirectories
+x               - by functionality
+x   - keep BC user interface top level
+x   - simplify version tracking (file away old versions safely and easily)
+x       - mercurial version control system
+x   - move predefined program names out of copyover_data
+x       - place them in buck_data.asm
+x       - rename them to clarify what they are
+x           - use "BC" in favor of "Buck"
+x               -> NOTE: this also necessitates renaming many functions too
+x                   -> (not completed yet)
+x           - program names 
+x           - labels of the name data
+x           - update all routines that use the labels
+x if mill data matrices are initialized (in SwitchMill), notify user that they 
+x   were missing
+x update the mill name data variable on every SwitchMill
+x   -> minimal impact to the user, and program cost would be high to implement
+x       a check
+x clear the menu _after_ stat data is exported in FinMenu
+x turn run indicator on for bcstat
+- in guess mode, start with the user's guess as the best price
+    -> his should speed things up significantly
+- make tampercheck verify the existance of all of the TIBASIC programs
+- design a straightforward way to maximize the length left in the woods
+- prepare the Buck algorithm for upcoming enhancements
+    - price skew number to be used in volume constraint framework
+    - check feasability of adding grade criteria checks
+        - possibly make adding such checks easier
+    - switch copyblock choice function from (>=) to just (>)
+        -> this will reverse the effective priority order and decrease the 
+            number of runtime copyblock activations
+        -> this will also enable specialized copyblock choice criteria like 
+            (percent better value) or similar
+        -> this may also require significant modification to BuckLP2 because of
+            its indexing and selection system
+            -> all of the checks are oriented toward the current reverse display
+                order (that I went to great pain to implement)
+        - add fancy checks to allow ties to be tracked
+            
+
+
+
+- write user manual
+- determine pricing to sell the calculator
+
+
+- write input function
+x   -> for numbers only; strings can be input via available routines
+x   -> may be able to use TIBASIC program to call the TI Input function
+x       -> need to initialy checkpoint/sum the program to ensure it can not be 
+x           changed without notice
+x       - this will not work
+x           - OP1 is used by TIOS when switching between programs
+x           - obfuscation is heavy regarding how to access Input from assembler
+    - write number to OP1
+    - print number to screen as it is typed
+        - only accept one decimal point
+        - check for maximum characters
+- check which routines could reference the program global constraints defines 
+    and modify them to do so
+- make ResetVolatileData roll "it" over to 255's more elegantly
+- add log grade criteria
+    - create input in user interface
+x   - create log_grade input data array
+    - add grade to criteria editor
+x       - create grade criteria array
+    - add grade criteria check
+    - add grade price check
+    - create grade determination function for Buck
+    - create "current grade" variable for Buck
+    - check LCV indexing
+        -> needs to be hard indexing rather than "run-up" indexing
+        - fix if necessary
+- fix FinDisplay3 5-log display problem
+- fix Div8~16Bit bug
+    -> can this bug be recreated?
+        - document recreation circumstances
+- add more functions to BuckStat
+    - compute tarif numbers
+    - compute basal area
+    - estimate DBH (diameter at breast height)
+    -
+- remove the duplicate check from BuckLP2
+    -> this will necessitate a specialized, criteria-based find function
+- write a find function for LCV elements that includes criteria values
+    - take input of length, min/max criteria, and volume group
+    - return status and index
+- update BuckLP2 to use the InputInt function
+- write volume percentage constraint framework
+- rewrite BuckInput to operate more like an editor
+- add interrupt timer to halt execution if too much time passes
+
+
+

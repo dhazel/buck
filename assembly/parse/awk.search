@@ -1,0 +1,20 @@
+#!/bin/awk
+
+BEGIN {
+    count = 0
+}
+
+{   
+    # search for lines of code
+    if(($1 !~ /^ *;/)){
+        if(index($2,"\r")){
+        }else{
+            count = count + 1
+            print
+        }
+    }
+}
+
+END {
+    print count
+}

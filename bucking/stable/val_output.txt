@@ -1,0 +1,7 @@
+
+Your choices...
+Lengths are: [16, 16, 16, 26, 16] total: 94.1665
+Volumes are: [460.0, 300.0, 180.0, 110.0, 30.0] total: 1080.0
+Top diams are: [25, 21, 17, 11, 7]
+Prices are: [239.200, 156.000, 93.600, 57.200, 15.600] total: 561.6
+

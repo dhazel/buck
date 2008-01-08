@@ -1,0 +1,42 @@
+
+TODO_________________
+
+x display volumes
+x track volume
+x   - create statistics program for handover
+x   - add statistics configuration in BuckSetup
+x       - enable/disable statistics
+x   - place statistics choice handler calls in FinMenu
+-> display more optimal choices?
+x rearange execution in BuckLP2 to avoid menu flicker
+x separate BuckLP2 out of the main program
+x   - determine all shared subroutines
+x   - separate out all shared subroutines
+x   - write a data sharing "copy-over" routine
+x   - find and experiment with the assembly program handover function
+x       -> does execution return to the calling program's location and state?
+x           -> if not, how can I return execution to where I need it?
+x check to make sure that all _winBtm and _winTop references are correct
+-> consider making a library system that can dynamically load non-speed-critical
+    routines to the end of the program for execution
+-> consider splitting out the setup routines into a helper program
+- write input function
+    -> for numbers only unless need arises for strings
+    - write number to OP1
+    - print number to screen as it is typed
+        - only accept one decimal point
+        - check for maximum characters
+    
+
+
+CHANGES_________________
+
+
+NOTES___________________
+
+- 'jp m', 'jp p', 'jp po', and 'jp pe' can not be replaced with 'jr', all other 
+    absolute jumps can be replaced with relative jumps.
+    - right now this only affects BuckLP2, Interpolate, 
+        PrintArrayElm_drawscreen, BuckInput, and TamperChk
+
+

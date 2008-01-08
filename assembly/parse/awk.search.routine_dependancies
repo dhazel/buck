@@ -1,0 +1,65 @@
+#!/bin/awk
+#
+# This script displays all buck subroutine names and their dependancies
+#   from the input file(s). It also checks the tested and untested status of
+#   each routine and displays a notification for untested routines.
+#
+
+BEGIN {ORS = " "}
+
+{   
+    # print file name
+    if(file != FILENAME){
+        file = FILENAME
+        print("\n"file)
+        in_subroutine = 0
+    }
+    # print subroutine name
+    if(/^; [_~a-zA-Z0-9]+ --/){
+        if($2 !~ /NOTE/){
+            print("\n   "$2" :")
+            subroutine_name = $2
+            # prep for processing the new subroutine
+            delete listed_array
+            listed_array_index = 0
+            in_subroutine = 1
+        }
+    }
+    # print untested notification
+    if(/^; +tested:/){
+        if($3 ~ /no/){
+            print("    >>> untested <<<")
+        }
+    }
+    # print calls and jumps if they refer outside the current routine
+    if((/^ +call [^_][,_~a-zA-Z0-9]+/) || (/^ +jp [,_~a-zA-Z0-9]+/)){
+        if($2 !~ subroutine_name){
+            # check for trailing carriage return and remove it
+            if(index($2,"\r")){
+                reference = substr($2,1,(length($2) - 1))
+            }else{
+                reference = $2
+            }
+            # strip reference conditionals if present
+            if(index(reference,",")){
+                split(reference,reference_fields,",")
+                reference = reference_fields[2]
+            }
+            # check for repeats in order to ignore them
+            repeat = 0
+            for(element in listed_array){
+                if(listed_array[element] == reference){
+                    repeat = 1
+                }
+            }
+            # print the reference 
+            if((repeat == 0) && (in_subroutine == 1)){
+                # check for calculator builtin again before printing
+                if(reference !~ /^_/){
+                    print("\n      "reference)
+                    listed_array[listed_array_index++] = reference
+                }
+            }
+        }
+    }
+}

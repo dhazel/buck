@@ -1,0 +1,35 @@
+
+Calculator Notes_________________________
+
+- may be precipitous to change calculator platform
+    - TI86 appears to be in process of being discontinued
+    - Newer calculators have more memory and are much faster
+    - Newer calculators are cheaper
+    - Newer calculators have C compilers available
+- considerations to changing calculator platform
+    - code must be re-written
+        - the current ASM code may be largely unusable
+        - can use C
+    - must learn the ins-and-outs of a different platform
+
+- available platforms to work with
+    - TI89
+        - M68k (coldfire) processor
+        - tiGCC C compiler
+        - USB port
+
+    - HP49g, HP50g calculator lines (HP48g too??)
+        - ARM (power) processor
+            - 200 MHz
+        - HPG-CC C compiler
+            - filesystem, keyboard, drawing, and windowing routines
+        - expandable memory
+        - USB port
+        - calculator OS runs in emulated Saturn5 invironment
+            - may be difficult to interface with
+        - underlying OS is called KOS (relative of KeyKOS??)
+
+
+
+
+

@@ -1,0 +1,29 @@
+#!/bin/awk
+
+BEGIN {
+    count = 0
+}
+
+{   
+    # track filenames
+    if(file != FILENAME){
+        file = FILENAME
+        filearray[filenumber] = file
+        filenumber = filenumber + 1
+    }
+
+    # track lines of code
+    if(($1 !~ /^ *;/) && ($1 ~ /[a-zA-Z0-9]/)){
+        count = count + 1
+    }
+}
+
+END {
+    print "Files read:"
+    for(element in filearray){
+        print filearray[element]
+    }
+    print " "
+    print "Total lines of code:"
+    print count
+}

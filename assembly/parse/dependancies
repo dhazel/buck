@@ -1,0 +1,357 @@
+
+about_buck.asm 
+   AboutBuck: 
+      BuckScreen 
+   BuckScreen: 
+      tile_gen 
+   tile_gen: 
+BC60.asm 
+   BC: 
+      TamperChk 
+      StatDataInit 
+      SwitchMill 
+      ResetVolatileData 
+      ClearErrors 
+      BuckInput 
+      Buck 
+      FinMenu 
+      Err_s_Overrun 
+      ArrayAccess_ne 
+      FindByte 
+      CriteriaPassFail 
+      Volume 
+      ArryAccessW_ne 
+      Price2standalone 
+      SumWrdArray 
+      SumWrdArray_rel 
+BCBuck22.asm 
+   Buck: 
+      ErrTooLong 
+      ArrayAccess 
+      ErrTooShort 
+      ArrayAccess_ne 
+      SumBytArray 
+      ArryAccessW 
+      Interpolate 
+      CriteriaPassFail 
+      Volume 
+      Price2 
+      SumWrdArray 
+      SumWrdArray_rel 
+bc_data.asm 
+bc_includes.asm 
+BCLP2.asm 
+   LengthPrice: 
+      TamperChk 
+      BCLP2 
+      copyover_data 
+   BCLP2:     >>> untested <<< 
+      menu 
+      menumessage 
+      clearwindow 
+      PrintArrayElm_drawscreen 
+      ArryAccessW_ne 
+      PrintArrayLWElm 
+      ArrayAccess_ne 
+      ByteLShift 
+      clearmenumessage 
+      bigmessage 
+      CriteriaEditor 
+      clearmenu 
+      Mult8Bit 
+      Mult8~16Bit 
+      save_data 
+      workingmessage 
+      StatDataInit 
+BCStup.asm 
+   BCStup: 
+      TamperChk 
+      BCSetup 
+      copyover_data 
+   BCSetup:     >>> untested <<< 
+      menu 
+      Handoff_BCLP2 
+      SwitchMill 
+      menuhighmessage 
+      ArrayAccess_ne 
+      StatDataInit 
+      save_data 
+      clearwindow 
+bc_userinterface.asm 
+   FinMenu:     >>> untested <<< 
+      FinDisplay3 
+      menu 
+      PrintErrors 
+      ExportResults 
+      ErrDataUnused 
+      TestPrints 
+      clearmenu 
+      menuhighmessage 
+   BCStart:     >>> untested <<< 
+      menu 
+      Handoff_BCStup 
+      AboutBuck 
+      BC_basic_calculate 
+      BC_usercompare_calculate 
+      BC_millcompare_calculate 
+      menuhighmessage 
+   BuckInput: 
+      ClearInputs 
+      menu 
+      clearmenumessage 
+      ArrayAccess 
+      Mult8Bit 
+      menumessage 
+      BCStart 
+   FinDisplay3: 
+      clearwindow 
+      headerbar 
+      PrintArrayElm 
+      ArryAccessW 
+   headerbar: 
+TamperChk.asm 
+   TamperChk: 
+      save_data 
+      bigmessage 
+      AboutBuck 
+routines/conversion/ConvOP1.asm 
+   ConvOP1: 
+      ErrConvOP 
+      ConvBlock 
+   ConvBlock: 
+      Mult8~16Bit 
+   ErrConvOP: 
+      VarDump 
+routines/data/ArrayAccess.asm 
+   ArrayAccess: 
+      Err_s_Overrun 
+routines/data/ArrayAccess_ne.asm 
+   ArrayAccess_ne: 
+routines/data/ArryAccessW.asm 
+   ArryAccessW: 
+      Err_s_Overrun 
+routines/data/ArryAccessW_ne.asm 
+   ArryAccessW_ne: 
+routines/data/ByteLShift.asm 
+   ByteLShift: 
+routines/data/FindByte.asm 
+   FindByte: 
+      SetZeroFlag 
+      ResetZeroFlag 
+routines/flags/ResetCarryFlag.asm 
+   ResetCarryFlag: 
+routines/flags/ResetZeroFlag.asm 
+   ResetZeroFlag: 
+routines/flags/SetCarryFlag.asm 
+   SetCarryFlag: 
+routines/flags/SetZeroFlag.asm 
+   SetZeroFlag: 
+routines/math/Div8~16Bit.asm 
+   Div8~16Bit: 
+routines/math/Mult8~16Bit.asm 
+   Mult8~16Bit: 
+routines/math/Mult8Bit.asm 
+   Mult8Bit: 
+routines/math/SumBytArray.asm 
+   SumBytArray: 
+routines/math/SumWrdArray.asm 
+   SumWrdArray: 
+routines/math/SumWrdArray_rel.asm 
+   SumWrdArray_rel: 
+routines/screen/clearmenu.asm 
+   clearmenu: 
+routines/screen/clearmenumessage.asm 
+   clearmenumessage: 
+routines/screen/clearwindow.asm 
+   clearwindow: 
+routines/screen/PrintArray.asm 
+   PrintArray: 
+routines/screen/PrintArrayElm.asm 
+   PrintArrayElm: 
+routines/screen/PrintArrayLWElm.asm 
+   PrintArrayLWElm: 
+routines/screen/PrintArrayW.asm 
+   PrintArrayW: 
+routines/screen/PrintArrayWElm.asm 
+   PrintArrayWElm: 
+routines/test_functions/buck_testfunctions.asm 
+   TestPrints: 
+      PrintArray 
+      PrintArrayW 
+   VarDump: 
+      clearwindow 
+      clearmenu 
+      PrintArray 
+      PrintArrayW 
+      PrintErrors 
+   Gotcha: 
+   BugCatcher: 
+routines/TIOS/ArrayToMatRow.asm 
+   ArrayToMatRow: 
+      MatrixAccess 
+      ResetZeroFlag 
+      ResetCarryFlag 
+routines/TIOS/MatrixAccess.asm 
+   MatrixAccess: 
+      Mult8Bit 
+      Mult8~16Bit 
+      ResetZeroFlag 
+      ResetCarryFlag 
+      SetCarryFlag 
+      SetZeroFlag 
+routines/TIOS/MatrixZero.asm 
+   MatrixZero: 
+      MatrixAccess 
+      ResetZeroFlag 
+      ResetCarryFlag 
+routines/TIOS/StringCreate.asm 
+   StringCreate:     >>> untested <<< 
+      SetZeroFlag 
+      ResetZeroFlag 
+routines/user_interface/bigmessage.asm 
+   bigmessage: 
+routines/user_interface/CriteriaEditor.asm 
+   CriteriaEditor: 
+      menu 
+      clearwindow 
+      menuhighmessage 
+      PrintArrayElm_drawscreen 
+      PrintArrayLWElm 
+      ArryAccessW_ne 
+      bigmessage 
+      clearmenu 
+      menumessage 
+      InputInt 
+routines/user_interface/InputInt.asm 
+   InputInt: 
+      Mult8~16Bit 
+routines/user_interface/menu.asm 
+   menu: 
+routines/user_interface/menuhighmessage.asm 
+   menuhighmessage: 
+routines/user_interface/menumessage.asm 
+   menumessage: 
+routines/user_interface/PrintArrayElm_drawscreen.asm 
+   PrintArrayElm_drawscreen: 
+routines/user_interface/workingmessage.asm 
+   workingmessage:     >>> untested <<< 
+routines/BC/data/ClearInputs.asm 
+   ClearInputs: 
+routines/BC/data/copyover_data.asm 
+   copyover_data:     >>> untested <<< 
+routines/BC/data/ExportResults.asm 
+   ExportResults:     >>> untested <<< 
+      MatrixAccess 
+      ConvOP1 
+      MatrixZero 
+      ArrayToMatRow 
+      ResetCarryFlag 
+      SetCarryFlag 
+routines/BC/data/LCVCompaction.asm 
+   LCVCompaction: 
+      FindByte 
+      LCVCompact_loop_continue 
+      ByteLShift 
+      LCVCompact_special_return 
+      LCVCompact_loop_deleteloop 
+      LCVCompact_loop 
+routines/BC/data/save_data.asm 
+   save_data: 
+routines/BC/data/StatDataInit.asm 
+   StatDataInit:     >>> untested <<< 
+      MatrixAccess 
+      ErrStatDataMissing 
+      MatrixZero 
+      StringCreate 
+      LCVCompaction 
+      ArrayToMatRow 
+   ErrStatDataMissing:     >>> untested <<< 
+      bigmessage 
+      workingmessage 
+routines/BC/data/SwitchMill.asm 
+   SwitchMill:     >>> untested <<< 
+      save_data 
+      MatrixAccess 
+      StatDataInit 
+routines/BC/handoff/Handoff_BCLP2.asm 
+   Handoff_BCLP2: 
+      copyover_data 
+      bigmessage 
+routines/BC/handoff/Handoff_BCStup.asm 
+   Handoff_BCStup: 
+      copyover_data 
+      bigmessage 
+routines/buck/algorithm/CriteriaPassFail.asm 
+   CriteriaPassFail: 
+      ArryAccessW_ne 
+routines/buck/data/ResetVolatileData.asm 
+   ResetVolatileData: 
+routines/buck/error_handlers/ClearErrors.asm 
+   ClearErrors: 
+routines/buck/error_handlers/ErrDataUnused.asm 
+   ErrDataUnused: 
+routines/buck/error_handlers/ErrIntpolatOverrun.asm 
+   ErrIntpolatOverrun: 
+      VarDump 
+      Interpolate_endIntpolat 
+routines/buck/error_handlers/ErrLCVoverrun.asm 
+   ErrLCVoverrun: 
+      VarDump 
+routines/buck/error_handlers/ErrMaxDiam.asm 
+   ErrMaxDiam: 
+      VarDump 
+      Volume_fi7 
+routines/buck/error_handlers/ErrMaxLgth.asm 
+   ErrMaxLgth: 
+      VarDump 
+      Volume_fi7 
+routines/buck/error_handlers/ErrMinDiam.asm 
+   ErrMinDiam: 
+      VarDump 
+      Volume_fi7 
+routines/buck/error_handlers/ErrMinLgth.asm 
+   ErrMinLgth: 
+      VarDump 
+      Volume_fi7 
+routines/buck/error_handlers/error_data.asm 
+routines/buck/error_handlers/ErrReverseTaper.asm 
+   ErrReverseTaper: 
+      VarDump 
+      Interpolate_endIntpolat 
+routines/buck/error_handlers/Err_s_Overrun.asm 
+   Err_s_Overrun: 
+      VarDump 
+routines/buck/error_handlers/ErrTooLong.asm 
+   ErrTooLong: 
+      VarDump 
+routines/buck/error_handlers/ErrTooShort.asm 
+   ErrTooShort: 
+      VarDump 
+routines/buck/math/Interpolate.asm 
+   Interpolate: 
+      ErrIntpolatOverrun 
+      ArrayAccess 
+      ErrReverseTaper 
+      Mult8Bit 
+      Div8~16Bit 
+routines/buck/math/Price2.asm 
+   Price2: 
+      ErrLCVoverrun 
+      ArryAccessW_ne 
+      ConvOP1 
+routines/buck/math/Price2standalone.asm 
+   Price2standalone: 
+      FindByte 
+      Price2 
+routines/buck/math/Volume.asm 
+   Volume: 
+      ErrMinDiam 
+      ErrMaxDiam 
+      Mult8Bit 
+      ErrMaxLgth 
+      ErrMinLgth 
+      ConvOP1 
+routines/buck/user_interface/PrintErrors.asm 
+   PrintErrors: 
+      clearwindow 
+      clearmenu 

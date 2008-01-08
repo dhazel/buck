@@ -1,0 +1,13 @@
+#!/bin/awk
+#
+# This script parses the dependancies file in search of routines that have 
+#   no dependancies
+#
+
+
+{
+    if((name ~ /:/) && (($1 ~ /:/) || ($1 ~ /.asm/))){
+        print(name)
+    }
+    name = $1
+}
