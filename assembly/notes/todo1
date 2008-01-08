@@ -342,8 +342,6 @@ x   - offer the option of a pensil and paper
 x include trim in display in BuckLP2
 x   -> note that this only works in the current code with the current 
 x       duplicate-entry check disabled
-- in guess mode, start with the user's guess as the best price
-    -> his should speed things up significantly
 / fix regression in BuckLP2 display (bottom line)
 /   -> this display problem only happens when BuckLP2 is run standalone
 x organize the code better

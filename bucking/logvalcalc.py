@@ -134,7 +134,7 @@ def gui_process_logs():
     print >>file 
 
     file.close()
-    os.system("gedit "+sys.path[0]+os.sep+"val_output.txt &")
+    os.system("zenity --title=\"Your Buck Values\" --info --no-wrap --text=\"`cat "+sys.path[0]+os.sep+"val_output.txt`\" &")
 
 
 def gui_manage_prices():

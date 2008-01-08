@@ -78,7 +78,7 @@ def buck_result_display(gui_mode,Lf,v1,td1,p1,Lf2,v2,td2,p2):
 #        print >>file 
 
         file.close()
-        os.system("kwrite "+sys.path[0]+os.sep+"output.txt &")
+        os.system("zenity --title=\"Best Buck Lengths\" --info --no-wrap --text=\"`cat "+sys.path[0]+os.sep+"output.txt`\" &")
 
     else:
         print
