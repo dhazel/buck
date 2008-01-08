@@ -1,7 +1,0 @@
-
-Your choices...
-Lengths are: [20, 18, 0, 0, 0] total: 39.6666
-Volumes are: [350.0, 60.0, 0.0, 0.0, 0.0] total: 410.0
-Top diams are: [20, 10, 0, 0, 0]
-Prices are: [52.500, 9.000, 0.000, 0.000, 0.000] total: 61.5
-
