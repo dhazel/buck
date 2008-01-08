@@ -69,7 +69,6 @@ mill1_number: .db 0
 mill1_distance: .db 0
 prices_mill1: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 LCV_mill1: .db 1,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255
-grades_mill1: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;grade criteria
 minmax_td_mill1: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
 mill1_LCV_size: .db 0 ;number of elements (starting from 0) in the LCV
 mill2_name: .db "rsg     ",0  
@@ -77,7 +76,6 @@ mill2_number: .db 1
 mill2_distance: .db 0
 prices_mill2: .dw 300,300,475,475,475,475,475,475,475,475,575,575,625,625,625,0,0,0,0,0
 LCV_mill2: .db 15,13,31,29,27,25,23,21,19,17,35,33,41,39,37,255,0,0,0,0,255
-grades_mill2: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;grade criteria
 minmax_td_mill2: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
 mill2_LCV_size: .db 14 ;number of elements (starting from 0) in the LCV
 mill3_name: .db "freres  ",0 
@@ -85,7 +83,6 @@ mill3_number: .db 2
 mill3_distance: .db 0
 prices_mill3: .dw 580,580,580,580,580,580,580,580,580,0,0,0,0,0,0,0,0,0,0,0
 LCV_mill3: .db 12,13,23,31,39,33,18,27,35,255,0,0,0,0,0,0,0,0,0,0,255
-grades_mill3: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;grade criteria
 minmax_td_mill3: .dw 8,8,8,8,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
 mill3_LCV_size: .db 8 ;number of elements (starting from 0) in the LCV
 mill3_end:  ;marks the end of mill3 data
@@ -109,7 +106,6 @@ LCV: .db 23,31,39,33,18,27,35,255,0,0,0,0,0,0,0,0,0,0,0,0,255
                     ;   ; __this *needs* to be 255 terminated initially !!!
                         ;   also, trim should be added when this array is input
 
-grades: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;grade criteria
 minmax_td: .dw 8,8,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max top diameter
                                                        ; criteria. In each
                                                        ; element the first byte
@@ -140,7 +136,6 @@ data_inputs_start:
 ;[NOTE -- (log description arrays) log and log_dia to be requested as inputs]
 log: .db 0,150,0,0,0,0
 log_dia: .db 30,6,0,0,0,0
-log_grade: .db 0,0,0,0,0,0
 length: .db 150 ;[total log length variable]
 data_inputs_end:
 ;/[END INPUTS]==================================================================
