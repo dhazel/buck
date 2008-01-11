@@ -70,7 +70,7 @@ Buck_for0:
 Buck_fi0:
     dec hl 
     dec b
-    jp p,Buck_for0 ;[255 terminated vector -- loop until the end]
+    jp p,Buck_for0 ;[loop until the end]
                     ;
                     
                     
@@ -286,10 +286,9 @@ Buck_overskip:
     pop hl;[hl == Li[s] ]                       [SP = 0]
     inc hl
     ld (hl),a ;[Li[s+1] == L - sum(Li)]
+    push bc ;[b == s]
     push hl ;[for later below (hl == Li[s+1])]
     dec hl
-    
-    push bc ;[b == s]
     
     ld ix,p         ;        sum_p = sum(p)
     call SumWrdArray
@@ -310,6 +309,19 @@ Buck_copyblock_start:
     jp nz,Buck_fiesle6
     ld a,l
     cp e
+    jp z,Buck_leftoverscheck1
+    jp nc,Buck_fiesle6
+    jp Buck_copyblock1
+Buck_leftoverscheck1:           ;if we can leave more tree in the woods, do it
+    ld a,(firstchoice_result_vars + _result_offset_siter)
+    inc a
+    ld hl,firstchoice_result_vars + _result_offset_lengths
+    ld b,a
+    call ArrayAccess
+    ld a,(hl)   ;A <- Lf[s + 1]
+    pop hl      ;(hl) <- Li[s + 1]
+    push hl
+    cp (hl)
     jp nc,Buck_fiesle6
 Buck_copyblock1:
     ld (sum_p),de ;[de == sum_p]
@@ -336,6 +348,19 @@ Buck_fiesle6:       ;        elif sum_p > sum(p2):
     jp nz,Buck_fi9
     ld a,l
     cp e
+    jp z,Buck_leftoverscheck2
+    jp nc,Buck_fi9
+    jp Buck_copyblock2
+Buck_leftoverscheck2:          ;if we can leave more tree in the woods, do it
+    ld a,(secondchoice_result_vars + _result_offset_siter)
+    inc a
+    ld hl,secondchoice_result_vars + _result_offset_lengths
+    ld b,a
+    call ArrayAccess
+    ld a,(hl)   ;A <- Lf[s + 1]
+    pop hl      ;(hl) <- Li[s + 1]
+    push hl
+    cp (hl)
     jp nc,Buck_fi9
 Buck_copyblock2:
     ld (sum_p),de ;[de == sum_p]
@@ -347,8 +372,8 @@ Buck_copyblock2:
     ldir 
 
 Buck_fi9:
-    pop bc ;[b == s]
     pop hl ;[hl == Li[s+1]]
+    pop bc ;[b == s]
     
     ld a,0                      ;[print progress indicator if s == 0]
     cp b

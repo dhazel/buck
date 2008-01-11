@@ -379,7 +379,8 @@ x       - add the "s" iterator overrun check to Buck_main
 x   - in guess mode, start with the user's guess as the best price
 x       -> speed increase is quite marginal, very small
 x       -> could also be done with second-choice 
-- design a straightforward way to maximize the length left in the woods
+x debug statdata checking
+x design a straightforward way to maximize the length left in the woods
 - prepare the Buck algorithm for upcoming enhancements
     - price skew number to be used in volume constraint framework
 x   - switch copyblock choice function from (>=) to just (>)
@@ -390,7 +391,6 @@ x       -> this will also enable specialized copyblock choice criteria like
 x           (percent better value) or similar
 x   - reverse LCV traversal
 x       - remove need for 255 termination
-- debug statdata checking
 
 
 

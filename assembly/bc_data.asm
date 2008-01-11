@@ -144,8 +144,6 @@ data_inputs_end:
 ;[BEGIN VOLATILE DATA]==========================================================
 data_volatile_start:
 
-status_iterator: .db 0 ;this is simple storage for tracking the all important 
-                       ;    "s" iterator, and is used by VarDump only
                     ;
                     ;    it = [255,255,255,255,255,255]  #iteration tracker 
 it: .db 255,255,255,255,255,255;            #(this currently is used to track 
@@ -161,9 +159,10 @@ LCVcompact_size: .db 0 ;number of elements (starting from 0) in LCVcompact
 #define _result_offset_p        8
 #define _result_offset_v        20
 #define _result_offset_td       32
-#define _result_offset_sum_v    38
-#define _result_offset_mill_num 40
-#define _result_offset_name     41
+#define _result_offset_siter    38
+#define _result_offset_sum_v    39
+#define _result_offset_mill_num 41
+#define _result_offset_name     42
 
 ;   -- order is important
 ;   NOTE: result variable order must coincide with all other result variables
@@ -178,6 +177,7 @@ sum_p: .dw 0
 p:  .dw 0,0,0,0,0,0 ;    p = [0,0,0,0,0,0]               #price tracker
 v:  .dw 0,0,0,0,0,0 ;    v = [0,0,0,0,0,0]               #volume tracker
 td: .db 0,0,0,0,0,0 ;    td = [0,0,0,0,0,0]              #top diameter tracker
+status_iterator: .db 0 ;simple storage tracking the all important "s" iterator
 
 ;   -- order is important
 firstchoice_result_vars:
@@ -186,6 +186,7 @@ sum_p1: .dw 0
 p1: .dw 0,0,0,0,0,0 ;    p1 = [0,0,0,0,0,0]
 v1: .dw 0,0,0,0,0,0 ;    v1 = [0,0,0,0,0,0]
 td1: .db 0,0,0,0,0,0;    td1 = [0,0,0,0,0,0]
+s_iterator1: .db 0 ;simple storage tracking the all important "s" iterator
 sum_v1: .dw 0
 firstchoice_mill_number: .db 0
 firstchoice_result_name: .db 0,0,0,0,0,0,0,0,0
@@ -197,6 +198,7 @@ sum_p2: .dw 0
 p2: .dw 0,0,0,0,0,0 ;    p2 = [0,0,0,0,0,0]
 v2: .dw 0,0,0,0,0,0 ;    v2 = [0,0,0,0,0,0]
 td2: .db 0,0,0,0,0,0;    td2 = [0,0,0,0,0,0]
+s_iterator2: .db 0 ;simple storage tracking the all important "s" iterator
 sum_v2: .dw 0
 secondchoice_mill_number: .db 0
 secondchoice_result_name: .db 0,0,0,0,0,0,0,0,0
@@ -209,6 +211,7 @@ user_sum_p: .dw 0
 user_p: .dw 0,0,0,0,0,0
 user_v: .dw 0,0,0,0,0,0
 user_td: .db 0,0,0,0,0,0
+s_iteratorU: .db 0 ;simple storage tracking the all important "s" iterator
 user_sum_v: .dw 0
 user_guess_mill_number: .db 0
 user_guess_result_name: .db 0,0,0,0,0,0,0,0,0
@@ -241,6 +244,7 @@ mill1_sum_p: .dw 0
 mill1_p: .dw 0,0,0,0,0,0
 mill1_v: .dw 0,0,0,0,0,0
 mill1_td: .db 0,0,0,0,0,0
+s_iterator_m1: .db 0 ;simple storage tracking the all important "s" iterator
 mill1_sum_v: .dw 0
 mill1_mill_number: .db 0
 mill1_result_name: .db 0,0,0,0,0,0,0,0,0
@@ -252,6 +256,7 @@ mill2_sum_p: .dw 0
 mill2_p: .dw 0,0,0,0,0,0
 mill2_v: .dw 0,0,0,0,0,0
 mill2_td: .db 0,0,0,0,0,0
+s_iterator_m2: .db 0 ;simple storage tracking the all important "s" iterator
 mill2_sum_v: .dw 0
 mill2_mill_number: .db 1
 mill2_result_name: .db 0,0,0,0,0,0,0,0,0
