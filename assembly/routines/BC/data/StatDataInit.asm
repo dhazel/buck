@@ -116,6 +116,9 @@ StatDataInit_currentmillcheck_end:
     ld a,1              ;force overwrite of current string variable
     call StringCreate   ;create the string
     pop hl              ;get this off the stack
+    ;reset the error display status
+    ld a,0
+    ld (errStatDataMissing_displayed),a
     ;return
     call _runindicoff
     ret
@@ -153,11 +156,20 @@ StatDataInit_nonameinit:
 ;============================================================
 errStatDataMissing_text: .db "Detected missing      statistics storage   space!  Recreating   it.... Some stat     data has likely      been lost.",0 
 errStatDataMissing_bigmessage: .dw errStatDataMissing_text,okay_text,okay_text
+errStatDataMissing_displayed: .db 0  ;let's not display message more than once
 ErrStatDataMissing: ;if this happens print message and offer two "okay" options
+    ;check whether message has already been displayed
+    ld a,(errStatDataMissing_displayed)
+    cp 1
+    jp z,ErrStatDataMissing_skipdisplay
+    ld a,1
+    ld (errStatDataMissing_displayed),a
+
     ;print message to screen
     ld ix,errStatDataMissing_bigmessage
     call bigmessage
     call _getkey
+ErrStatDataMissing_skipdisplay:
     call workingmessage
     ret
 

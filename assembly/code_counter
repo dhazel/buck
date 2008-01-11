@@ -1,0 +1,5 @@
+#!/bin/bash
+
+awk -f parse/awk.search.codelines *.asm routines/*/*.asm routines/*/*/*.asm
+
+exit 0

@@ -42,7 +42,7 @@ import os
 import sys
 import Tkinter
 import operator
-import buck_2_2
+from buck_2_3 import *
 import buckPCh
     
 gui_mode = 1
@@ -72,7 +72,7 @@ def process_buck(L1,L2,L3,D0,D1,D2,D3,gui_mode):
 
     #buck0i_1
 
-    buck_2_2.buck_2_2(Length,log_vector,diameter_vector,gui_mode)
+    buck2(Length,log_vector,diameter_vector,gui_mode)
 
 
 

@@ -103,7 +103,7 @@ InputInt_number_nonzero:
     ld c,a  ;save for later (holds number pressed)
     push hl ;save for later (holds max number)
     ld a,10                     ;bump up previous number one place-value
-    call Mult8~16Bit            ;hl = de * a
+    call Mult8to16Bit            ;hl = de * a
     ;is number within limits?
     pop de                      ;DE <- max number
     call InputInt_checkfortoobig    ;is HL > DE ??
@@ -111,7 +111,7 @@ InputInt_number_nonzero:
     ;load number to variable
     ;(C holds number pressed)
     ;(HL holds current variable value)
-    ld b,0                    ;for clarity! (B is already zero from Mult8~16Bit)
+    ld b,0                   ;for clarity! (B is already zero from Mult8to16Bit)
     add hl,bc                   ;add current number to current variable value
     ;is number still within algorithm limits?
     call InputInt_checkfortoobig    ;is HL > DE ??

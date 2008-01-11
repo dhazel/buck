@@ -178,9 +178,9 @@ BCLP2_drawscreen_menumessage:
     ;display mill name on right-hand side
         ld a,6                  ;start in the sixth row down 
     ld (_penRow),a
-    ld hl,mill_name             ;load the name into HL
+    ld hl,mill_name           ;load the name into HL
     push hl
-    ld bc,currentmill_number - mill_name    ;extra safeguard (used by cpi below)
+    ld bc,currentmill_number - mill_name  ;extra safeguard (used by cpi below)
 BCLP2_drawscreen_nameloop:
     ld a,121                    ;write the letters in the 121st column
     ld (_penCol),a
@@ -591,7 +591,7 @@ BCLP2:
     call _runindicoff           ;turn run indicator off
 
     call clearmenumessage
-    ld ix,nomessage_text
+    ld ix,empty_text
     call BCLP2_drawscreen     ;draw the screen
     ;
 BCLP2_getkey:
@@ -887,7 +887,7 @@ BCLP2_number_price_nonzero:
     inc hl
     ld d,(hl)
     ld a,10                     ;bump up previous number one place-value
-    call Mult8~16Bit            ;hl = de * a
+    call Mult8to16Bit            ;hl = de * a
     ld a,$07                    ;is number within algorithm limits?
     cp h
     jp c,BCLP2_number_toobig
@@ -916,7 +916,7 @@ BCLP2_number_price_nonzero:
    ;load number to variable
     ;(C holds number pressed)
     ;(HL holds current variable value)
-    ld b,0                    ;for clarity! (B is already zero from Mult8~16Bit)
+    ld b,0                   ;for clarity! (B is already zero from Mult8to16Bit)
     add hl,bc                   ;add current number to current variable value
     ld a,$07                    ;is number still within algorithm limits?
     cp h

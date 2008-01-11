@@ -1,0 +1,12 @@
+#!/bin/bash
+
+FIND=$1;
+REPLACE=$2;
+shift 2;
+while [[ -w $1 ]]; do {
+    if ( grep -q $FIND $1; ); then {
+        vim "+set syntax=z8a" "+%s/$FIND/$REPLACE/gc" $1;
+    }; fi;
+    shift 1;
+}; done;
+

@@ -21,17 +21,18 @@ ResetVolatileData:
     ld a,(length)               ;copy length value into 'Li'
     ld (Li),a
     ld hl,it            ;roll all "it" values over to 255
-    dec (hl)            ;this could be better, but I am in a hurry
+    ld a,(LCV_size)
+    ld (hl),a           ;this could be better, but I am in a hurry
     inc hl
-    dec (hl)
+    ld (hl),a
     inc hl
-    dec (hl)
+    ld (hl),a
     inc hl
-    dec (hl)
+    ld (hl),a
     inc hl
-    dec (hl)
+    ld (hl),a
     inc hl
-    dec (hl)
+    ld (hl),a
 
     ret
 

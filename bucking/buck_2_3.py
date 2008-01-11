@@ -49,14 +49,14 @@ def buck2(L,log,log_dia,gui_mode):
 
     Li = [L,0,0,0,0,0]              #length iterators
 
-                                    #Lengths-to-Check Vector (255 terminated)
-    LCV = [36,40,38,34,32,30,28,26,24,22,20,18,16,255]
+                                    #Lengths-to-Check Vector 
+    LCV = [36,40,38,34,32,30,28,26,24,22,20,18,16]
 
     p16 = prices[0]
     p30 = prices[1]
     p36 = prices[2]
 
-    it = [255,255,255,255,255,255]  #iteration tracker (this currently is used
+    it = [0,0,0,0,0,0]  #iteration tracker (this currently is used
                                     #   to track index of LCV)
 
     p = [0,0,0,0,0,0]               #price tracker
@@ -78,33 +78,37 @@ def buck2(L,log,log_dia,gui_mode):
         if min_length > entry:
 	    min_length = entry
 
+    i = 0
+    for entry in it:
+        it[i] = len(LCV) - 1
+        i = i + 1
+    
     s=0
     while s >= 0:
 
-        if it[s] == 255:                #eg "top" of tree
-            it[s] = 0                   # (there will never be 255 LCV elements)
-            for entry in LCV:
-                if (entry + 0.8333) <= Li[s]:
-                    Li[s] = entry + 0.8333
-                    it[s] = it[s] + 1
+        if it[s] == (len(LCV) - 1):     #eg "top" of tree
+            while(it[s] != -1):
+                if (LCV[it[s]] + 0.8333) <= Li[s]:
+                    Li[s] = LCV[it[s]] + 0.8333
+                    it[s] = it[s] - 1
                     break
-                it[s] = it[s] + 1                     
-            it[s] = it[s] - 1
-            if entry == 255:
+                it[s] = it[s] - 1                     
+            if LCV[it[s]] == -1:
                 print "\n Too short!\n"
                 break
+            it[s] = it[s] + 1
         else:                               #middle of tree
             Li[s] = 0
             Li[s+1] = 0
-            it[s] = it[s] + 1
-            while (L - sum(Li)) < (LCV[it[s]] + 0.8333):
-                if (LCV[it[s]] == 255):
-                    break
-                it[s] = it[s] + 1
+            if(it[s] > -1):
+                while (L - sum(Li)) < (LCV[it[s]] + 0.8333):
+                    it[s] = it[s] - 1
+                    if (it[s] == -1):
+                        break
 
-            if (LCV[it[s]] == 255) & (s == 0):
+            if (it[s] == -1) & (s == 0):
                 break                        # END! QUIT! VAMOS! NOW!
-            if (LCV[it[s]] == 255):
+            if (it[s] == -1):
                  #clear all previous log lengths from the top of the tree
                 if (s+1) < len(Li):
                     Li[s+1] = 0
@@ -112,13 +116,14 @@ def buck2(L,log,log_dia,gui_mode):
                 p[s] = 0
                 v[s] = 0
                 td[s] = 0
-                it[s] = 255 # there will never be 255 LCV elements
+                it[s] = len(LCV) - 1 
                 s = s - 1
                 sum_Li = sum(Li)
                 continue
 
             Li[s] = LCV[it[s]] + 0.8333
 #        print "s:",s,"Li:",Li,"it:",it
+        it[s] = it[s] - 1
 
 
 #        print 'log loop %i\n' %s
@@ -135,7 +140,7 @@ def buck2(L,log,log_dia,gui_mode):
         sum_p = sum(p)
 
 
-        if sum_p >= sum(p1):
+        if sum_p > sum(p1):
             p2 = copy(p1)
             p1 = copy(p)
             v2 = copy(v1)
@@ -144,7 +149,7 @@ def buck2(L,log,log_dia,gui_mode):
             td1 = copy(td)
             Lf2 = copy(Lf)
             Lf = copy(Li)
-        elif sum_p >= sum(p2):
+        elif sum_p > sum(p2):
             p2 = copy(p)
             v2 = copy(v)
             td2 = copy(td)

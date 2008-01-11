@@ -6,7 +6,7 @@
 ;         B  = indicy number (array offset)
 ;  output: HL = pointer to array element
 ;  affects: A = B
-;  total: 7b/34t (including ret)
+;  total: 12b/51t (including ret) (with error check uncommented)
 ;  tested: yes
 ;============================================================
 ArrayAccess:

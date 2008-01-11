@@ -115,29 +115,28 @@ FinMenu_stat_choice3:
     ld a,3
     jp FinMenu_stat_choice
 FinMenu_stat_choice:
+    ;export the results
     call ExportResults
     jp c,ErrDataUnused
-    jp FinMenu_exit
-FinMenu_exit:
-    ;turn on the run indicator
-    call _runindicon
-
-    ;avoid screen scrolling
-   ; ld hl,_curRow  ;this prints "Done" over col3 last element!!
-   ; dec (hl)
-#ifdef DEBUG
-    call TestPrints
-#endif
 
     ;call the TIBASIC statistics processing program
+    call _runindicon    ;turn on the run indicator
     ld hl,pname_BCStatisticsProcessor-1   ;copy anything before string name
                                                ; for type byte
         rst 20h                                ;call _Mov10toOP1
     call _exec_basic
 
+    ;exit
+    jp FinMenu_exit
+FinMenu_exit:
     ;clear the menu
     call clearmenu
-    
+ 
+#ifdef DEBUG
+    call TestPrints
+    call VarDump
+#endif
+   
     ret
 FinMenu_notimplemented:
     ld hl,notimplemented_message    ;display not implemented message

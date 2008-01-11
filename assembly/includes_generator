@@ -5,3 +5,4 @@
 awk -f parse/awk.generate.includes dependancies BC60.asm BCLP2.asm BCStup.asm
 
 exit 0
+# test text

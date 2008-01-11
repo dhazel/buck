@@ -7,7 +7,7 @@
 ;         B  = indicy number (array offset)
 ;  output: HL = pointer to array element
 ;  affects: A = B
-;  total: 9b/42t (including ret)
+;  total: 14b/59t (including ret) (and error checking uncommented)
 ;  tested: yes
 ;============================================================
 ArryAccessW:

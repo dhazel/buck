@@ -14,13 +14,13 @@
 ;  output: TODO
 ;  affects: assume everything
 ;  total: 566b (including ret)
-;  tested: yes -- heavily
+;  tested: no -- heavily
 ;============================================================
     jp Buck         ; just in case!
 Buck_text: .db "Please Wait          ",0
 Buck:
     ;get firstchoice and secondchoice column names and mill numbers
-    ld hl,mill_name
+    ld hl,mill_name 
     ld de,firstchoice_result_name
     call _strcpy
     ld hl,mill_name
@@ -58,6 +58,9 @@ Buck:
     call nc,ErrTooLong
                     ;
     ld hl,LCV       ;    for entry in LCV:               #find minimum length
+    ld a,(LCV_size)
+    ld b,a
+    call ArrayAccess_ne
 Buck_for0:      
     ld a,(min_length);       if min_length > entry:
     cp (hl)
@@ -65,54 +68,64 @@ Buck_for0:
     ld a,(hl)       ;           min_length = entry
     ld (min_length),a
 Buck_fi0:
-    ld a,255 
-    cp (hl)
-    inc hl ;[<- shouldn't affect flags]
-    jp nz,Buck_for0 ;[255 terminated vector -- loop until the end]
+    dec hl 
+    dec b
+    jp p,Buck_for0 ;[255 terminated vector -- loop until the end]
                     ;
                     
                     
                     
     ld b,0          ;    s=0
 Buck_main:          ;    while s >= 0:
+    ;- error checking code -;
+    ld a,b          ;NOTE: this is removed from ArrayAccess
+    cp _lognum+1
+    jp nc,Err_s_Overrun
+    ;- - - - - - - - - - - -;
                     ;
-    ld hl,it        ;        if it[s] == 255:              #eg "top" of tree
-    call ArrayAccess ;                # (there will never be 255 LCV elements)
-    ld a,(hl)
-    cp 255
+    ld hl,it        ;        if it[s] == (len(LCV) - 1):      #eg "top" of tree
+    call ArrayAccess ;               
+    ld a,(LCV_size)
+    cp (hl)
     jp nz,Buck_esle1
-    ld (hl),0       ;            it[s] = 0
     push hl
     pop ix ;[(IX) <- it[s]]
-    ld hl,Li        ;            for entry in LCV:
+    ld hl,Li        ;            while(it[s] != -1):  #(ie: 255)
     call ArrayAccess
     ld a,(hl)
     ld (Li[s]_temp),a
     push hl
+    ld d,b
+    ld bc,(LCV_size)
     ld hl,LCV       
-Buck_for1:
-    ld a,(Li[s]_temp);               if (entry + 0.8333) <= Li[s]:
+    add hl,bc
+    ld b,d
+Buck_while00:
+    ld a,255
+    cp (ix)
+    jp z,Buck_elihw00
+    ld a,(Li[s]_temp);               if (LCV[it[s]] + 0.8333) <= Li[s]:
     cp (hl)
     jp c,Buck_fi2
     ld a,(hl)        ;                    Li[s] = entry + 0.8333
     ld (Li[s]_temp),a
-    inc (ix)         ;                    it[s] = it[s] + 1
-    jp Buck_rof1     ;                    break
+    dec (ix)         ;                    it[s] = it[s] - 1
+    dec hl ;[LCV index address]
+    jp Buck_elihw00  ;                    break
 Buck_fi2:
-    inc (ix)        ;                it[s] = it[s] + 1
-    ld a,255        ;            if entry == 255:
-    cp (hl)         ;                print "\n Too short!\n"
+    dec (ix)        ;                it[s] = it[s] - 1
+    dec hl ;[LCV index address]
+    ld a,255        ;            if it[s] == -1:    #(ie: 255)
+    cp (ix)         ;                print "\n Too short!\n"
     call z,ErrTooShort ;             break
-    inc hl 
-    jp Buck_for1 ;[beware the danger of this statement!]
-Buck_rof1:
-    dec (ix)        ;            it[s] = it[s] - 1
+    jp Buck_while00 ;[beware the danger of this statement!]
+Buck_elihw00:
+    inc (ix)        ;            it[s] = it[s] + 1
     ld a,(Li[s]_temp)
     pop hl
     ld (hl),a ;[Li[s] = entry + trim ^^ from above]
     jp Buck_fi1     ;        else:                       #middle of tree
 Buck_esle1:
-    inc (hl)        ;            it[s] = it[s] + 1
     push hl  ;[it[s]]
     ld e,(hl);[E <- it[s]]
     push de
@@ -126,12 +139,15 @@ Buck_esle1:
     call ArrayAccess_ne ;[(HL) <- LCV[it[s]]]
     ld b,c  ;[maintain B]
 
-    pop ix          ;            Li[s] = 0
+    pop ix          ;           Li[s] = 0
     ld (ix),0
-    ld (ix+1),0     ;            Li[s+1] = 0
+    ld (ix+1),0     ;           Li[s+1] = 0
+    ld a,255
+    cp e
+    jp z,Buck_fi00  ;           if(it[s] > -1):
     ld d,h ;[save HL for later]
     ld e,l
-    ld hl,Li        ;            while (L - sum(Li)) < (LCV[it[s]] + 0.8333):
+    ld hl,Li        ;               while (L - sum(Li)) < (LCV[it[s]] + 0.8333):
     call SumBytArray
     ld h,d
     ld l,e ;[(HL) <- LCV[it[s]]]
@@ -140,28 +156,26 @@ Buck_esle1:
     sub e  ;[A <- (L - sum(Li))]
     pop de ;[E <- it[s]]
     ld c,e ;[C <- it[s]]
+    ld d,a ;[D <- (L - sum(Li))]
 Buck_while0:
-    ld d,a
-    ld a,255        ;                if (LCV[it[s]] == 255):
-    cp (hl)
-    jp z,Buck_check255;                   break
-    inc c           ;                it[s] = it[s] + 1
-    ld a,d
-    cp (hl)
-    inc hl
-    jp c,Buck_while0
-    dec hl
-    dec c
-    jp Buck_check255end
-Buck_check255: 
-    pop hl      ;[(HL) <- it[s]]
-    ld (hl),c   ;[it[s] <- updated it[s]]
+    ld a,(hl)
+    cp d
+    jp c,Buck_no255
+    dec c           ;                   it[s] = it[s] - 1
+    dec hl  ;[LCV index address]
+    jp m,Buck_elihw0;                   if (it[s] == -1):
+                    ;                       break
+    jp Buck_while0
+Buck_elihw0:
+    push de ;[for consistancy]
+Buck_fi00:  ;[if we get here, we know that it[s] == -1]
+    pop de      ;[get this off the stack]
                     ;
-    ld a,b          ;            if (LCV[it[s]] == 255) & (s == 0):
+    ld a,b          ;            if (it[s] == -1) & (s == 0):
     cp 0
     jp z,Buck_end   ;                break              # END! QUIT! VAMOS! NOW!
-    ;unnecessary    ;            if (LCV[it[s]] == 255):
-                    ;            #clear all previous log lengths from the top of the tree
+    ;unnecessary    ;            if (it[s] == -1):
+                    ;   #clear all previous log lengths from the top of the tree
     ld (ix),0       ;                Li[s] = 0   
     ld a,b          ;                if (s+1) < len(Li):
     inc a
@@ -182,13 +196,12 @@ Buck_fi11:
     ld hl,td        ;                td[s] = 0
     call ArrayAccess
     ld (hl),0
-    ld hl,it        ;                it[s] = 255
-    call ArrayAccess
-    ld (hl),255 ;[there will never be 255 LCV elements]
+    pop hl      ;[(HL) <- it[s]]
+    ld a,(LCV_size) ;                it[s] = len(LCV) - 1
+    ld (hl),a 
     dec b           ;                s = s - 1
     jp Buck_main         ;                continue
-Buck_check255end: 
-                    ;
+Buck_no255: 
     ld a,(hl)       ;            Li[s] = LCV[it[s]] + 0.8333
     ld (ix),a
     push ix ;[load hl properly for consistancy with below (Li[s])]
@@ -222,6 +235,7 @@ Buck_fi1:                ;
 Buck_skip:
     pop bc  ;[load B properly]
     pop hl  ;[get this off the stack!]
+    dec (ix)
     jp Buck_main
 Buck_overskip:
 
@@ -249,12 +263,13 @@ Buck_overskip:
     inc c
     
         ;price--------------------------------------------------------
-    ;[c == length; op1 == volume]
+    ;[c == length; op1 == volume; ix = LCV index address]
     call Price2         ;        p[s] = buck1p.buck1p(Li[s],v[s],p16,p30,p36)
-    ;[the LCV_placeholder is now updated]
     ;[de == (price * 10)]
     ;[B is not still s]
         ;/price-------------------------------------------------------
+
+    dec (ix)
     
     pop bc  ;[b == s]
     ld hl,p ;[p[s] = price]
@@ -288,14 +303,14 @@ Buck_overskip:
     jp z,Buck_fi9
     
 Buck_copyblock_start:
-    ld hl,(sum_p1)  ;        if sum_p >= sum(p1):
+    ld hl,(sum_p1)  ;        if sum_p > sum(p1):
     ld a,h
     cp d
     jp c,Buck_copyblock1
     jp nz,Buck_fiesle6
-    ld a,e
-    cp l
-    jp c,Buck_fiesle6
+    ld a,l
+    cp e
+    jp nc,Buck_fiesle6
 Buck_copyblock1:
     ld (sum_p),de ;[de == sum_p]
 
@@ -311,17 +326,17 @@ Buck_copyblock1:
     ld bc,firstchoice_result_vars - transient_result_vars
     ldir 
 
-    jp Buck_fi9          ;        elif sum_p >= sum(p2):
-Buck_fiesle6:
+    jp Buck_fi9
+Buck_fiesle6:       ;        elif sum_p > sum(p2):
     ;[de == sum_p]
     ld hl,(sum_p2)  ;[hl <- sum(p2)]
     ld a,h
     cp d
     jp c,Buck_copyblock2
     jp nz,Buck_fi9
-    ld a,e
-    cp l
-    jp c,Buck_fi9
+    ld a,l
+    cp e
+    jp nc,Buck_fi9
 Buck_copyblock2:
     ld (sum_p),de ;[de == sum_p]
 
@@ -358,6 +373,7 @@ Buck_fi10:
     ;[main while loop return]
     jp Buck_main
 Buck_end:
+    pop hl  ;[get this off the stack]
     ;[load the sum_v variables]
     ld b,5              ;[6 elements in these arrays]
     ld hl,p1            ;[determine the elements with value to sum]

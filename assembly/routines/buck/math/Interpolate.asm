@@ -56,8 +56,9 @@ Interpolate_ilehw1:
     ;[NOTE -- the equation I am using...]
     ;[yu = (y1*(x2 - ux) + y2*(ux - x1))/(x2 - x1)]
     ;   [this avoids negative numbers; trees should _never_ have reverse taper]
-    ;   [also fes an integer tree representation problem introduced by division location]
-    ;[where...]
+    ;   [also fixes an integer tree representation (step function) problem 
+    ;   [introduced by division location]
+    ;[...]
     ;          [a == ux] 
     ld d,a ;   [d == ux]
     ld c,(hl) ;[c == x1]
@@ -103,8 +104,8 @@ Interpolate_overTaperError:
     ld a,d
     add a,e ;[a == (x2 - x1)]
     ld d,a ;[d == (x2 - x1)]
-    ;call _divHLbyA ;[this does the same thing as Div8~16Bit]
-    call Div8~16Bit ;[hl == (y1*(x2 - ux) + y2*(ux - x1))/(x2 - x1)]
+    call _divHLbyA ;[this does the same thing as Div8~16Bit]
+    ;call Div8-16Bit ;[hl == (y1*(x2 - ux) + y2*(ux - x1))/(x2 - x1)]
     ld d,l
     
     jp Interpolate_endIntpolat;[jp Interpolate_fi5]   

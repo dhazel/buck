@@ -116,7 +116,7 @@ MatrixAccess_boundscheck:   ;normal operation, check for existant element
     ld e,a              ;multiply by element length to get byte location
     ld d,0
     ld a,10             ;each element is 10 bytes long
-    call Mult8~16Bit
+    call Mult8to16Bit
     ld c,l              ;iterate on BC
     ld b,h
     pop hl              ;pop out the absolute address

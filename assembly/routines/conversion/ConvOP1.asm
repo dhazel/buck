@@ -114,7 +114,7 @@ ConvBlock_ConvOP1_multipliers: .db $00,$01   ;1   (not little endian here!!!)
                   .db $27,$10   ;10000
 ConvBlock:   
     push hl             
-    ld h,d              ;prep for Mult8~16Bit
+    ld h,d              ;prep for Mult8to16Bit
     ld l,e
     ld d,(hl)
     inc hl
@@ -122,7 +122,7 @@ ConvBlock:
     inc hl              ;(multiplier must be a 2-byte value)
     push hl             ;multiplier address
     push bc             ;total sum
-    call Mult8~16Bit
+    call Mult8to16Bit
     pop bc              ;total sum
     add hl,bc
     ld c,l

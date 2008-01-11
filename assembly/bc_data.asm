@@ -50,7 +50,7 @@ millcopy_matrix_name: .db 6,"bcsave"
 mill1_name_var: .db 8,"bcmill1n"   ;statdata mill name storage variables
 mill2_name_var: .db 8,"bcmill2n"
 mill3_name_var: .db 8,"bcmill3n"
-millcopy_name_var: .db 8,"bcsaven"
+millcopy_name_var: .db 7,"bcsaven"
 
 ;general data
 mill_fill_name: .db "------  ",0  ;NOTE: mill name data regions are same size
@@ -102,7 +102,7 @@ prices: .dw 580,580,580,580,580,580,580,580,580,580,580,580,580,580,580,580,580,
                     ;               #Lengths-to-Check Vector (255 terminated)
                     ;    LCV = [40,38,36,34,32,30,28,26,24,22,20,18,16,255]
 ;LCV: .db 17,18,19,20,21,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255 ;speed test lengths
-LCV: .db 23,31,39,33,18,27,35,255,0,0,0,0,0,0,0,0,0,0,0,0,255 
+LCV: .db 23,31,39,33,18,27,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0 
                     ;   ; __this *needs* to be 255 terminated initially !!!
                         ;   also, trim should be added when this array is input
 
@@ -292,7 +292,6 @@ inputsomething_message: .db "       Input   Something",0
 toobig_message: .db "      Number   Too   Big",0
 noroom_message: .db "       No   More   Room",0
 pressenter_message: .db "          Press    Enter!",0
-nomessage_text: .db " ",0
 notimplemented_message: .db "Not   Implemented",0
 
 ;simple strings for general use

@@ -70,74 +70,81 @@ BC_millcompare_calculate:
     ;save current_mill settings (for reload when done)
     ld a,(currentmill_number)
     push af
-
+    
     ;switch to mill1
     ld a,0
     ld (mill_number),a
     call SwitchMill
-
+    
     ;run buck algorithm
     call ResetVolatileData
     call ClearErrors        ;clear all error handler logs
     call BuckInput          ;get user inputs and load variables
     call Buck
-
+    
     ;save mill1 results
     ld hl,firstchoice_result_vars
     ld de,mill1_result_vars
     ld bc,secondchoice_result_vars - firstchoice_result_vars
     ldir
-
+    
     ;switch to mill2
     ld a,1
     ld (mill_number),a
     call SwitchMill
-
+    
     ;run buck algorithm
     call ResetVolatileData
     call Buck
-    
+        
     ;save mill2 results
     ld hl,firstchoice_result_vars
     ld de,mill2_result_vars
     ld bc,secondchoice_result_vars - firstchoice_result_vars
     ldir
-
+    
     ;switch to mill3
     ld a,2
     ld (mill_number),a
     call SwitchMill
-
+    
     ;run buck algorithm
     call ResetVolatileData
     call Buck
-
+    
     ;reload current_mill settings and data
     pop af
     ld (mill_number),a
     call SwitchMill
-
+    
     ;display all results
     ld hl,FinDisplay3_millcompare_display
     ld (FinDisplay_data_pointer),hl
     jp FinMenu
-
+    
     ret
+
 ;
 ; BC_usercompare_calculate -- the usercompare calculation mode block
 ;   NOTE: these comments are here for compliance with the dependency parser
 ;
 BC_usercompare_calculate:
-    ;run Buck
+    ;clean the data banks
     call ResetVolatileData  ;reset all volatile data
     call ClearErrors    ;clear all error handler logs
-    call BuckInput      ;get user inputs and load variables
-    call Buck           ;calculate optimal buck lengths
 
-    ;get user guess result column name
+    ;get user inputs
+    call BuckInput      ;get user inputs and load variables
+
+    ;determine user guess result column name
     ld hl,guess_text
     ld de,user_guess_result_name
     call _strcpy
+
+    ;determine the mill number field
+    ld a,(currentmill_number)
+    ld hl,user_guess_mill_number
+    ld (hl),a
     
     ;loop extract user buck lengths and diameters, calculate price for each one
     ld b,0
@@ -240,6 +247,15 @@ BC_usercompare_calculate_loop_end:
     call SumWrdArray_rel
     ld (user_sum_v),hl
 
+    ;copy user_guess results into Buck's data
+;    ld hl,user_guess_result_vars
+;    ld de,firstchoice_result_vars
+;    ld bc,firstchoice_mill_number - firstchoice_result_vars
+;    ldir ;NOTE: could also write secondchoice (speedup is marginal either way)
+
+    ;run Buck
+    call Buck           ;calculate optimal buck lengths
+
     ;display output
     ld hl,FinDisplay3_usercompare_display
     ld (FinDisplay_data_pointer),hl
@@ -248,6 +264,7 @@ BC_usercompare_calculate_loop_end:
     ;call TestPrints            
 
     ret                 ;just in case!
+
 ;
 ; BC_basic_calculate -- the basic calculation mode block
 ;   NOTE: these comments are here for compliance with the dependency parser

@@ -64,11 +64,11 @@ BCSetup_drawsetup_menu_data:
 
 ;mill setup
 BCSetup_millwelcome_text: .db "Mill:",0
-BCSetup_mill_drawsetup: .dw BCSetup_millwelcome_text,mill1_name,mill2_name,mill3_name
+BCSetup_mill_drawsetup: .dw BCSetup_millwelcome_text,mill1_name,mill2_name,mill3_name    
 BCSetup_millname_text: .db "Name:",0
 BCSetup_milldistance_text: .db "Distance:",0
 BCSetup_editingmill_text: .db "       EDITING   MILL",0
-BCSetup_mill_edit_drawsetup: .dw BCSetup_millwelcome_text,BCSetup_millname_text,BCSetup_milldistance_text,nomessage_text
+BCSetup_mill_edit_drawsetup: .dw BCSetup_millwelcome_text,BCSetup_millname_text,BCSetup_milldistance_text,empty_text
 
 ;calc setup
 BCSetup_calcwelcome_text: .db "Calculation Mode:",0
@@ -81,7 +81,7 @@ BCSetup_calc_drawsetup: .dw BCSetup_calcwelcome_text,BCSetup_basiccalc_text,BCSe
 BCSetup_statswelcome_text: .db "Statistics:",0
 BCSetup_statson_text: .db "ON",0
 BCSetup_statsoff_text: .db "OFF",0
-BCSetup_stats_drawsetup: .dw BCSetup_statswelcome_text,BCSetup_statsoff_text,BCSetup_statson_text,nomessage_text
+BCSetup_stats_drawsetup: .dw BCSetup_statswelcome_text,BCSetup_statsoff_text,BCSetup_statson_text,empty_text
 
 BCSetup:
     call _runindicoff           ;turn run indicator off

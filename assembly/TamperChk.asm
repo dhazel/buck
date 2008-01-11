@@ -16,12 +16,12 @@
 ;           permission to use program and/or full functionality
 ;  affects: assume everything 
 ;  total: 191b
-;  tested: yes
+;  tested: no
 ;============================================================
     jp TamperChk ;just in case!
 TamperChk_ID_name: .db 8,_version_ID_name   ;buck tamper check external variable
-                                        ; (versioned for coexistance)
-                                        ; (no longer than 8 digits)
+                                            ; (versioned for coexistance)
+                                            ; (no longer than 8 digits)
 TamperChk_ID_number_start: .db _version_ID_code  ;this should allow  
                                                  ;  differentiation between 
                                                  ;  builds
@@ -32,6 +32,37 @@ TamperChk_tamperfound_text: .db "Tampering detected. Program will exit",0
 TamperChk_tamperfound_bigmessage: .dw TamperChk_tamperfound_text,okay_text,okay_text
 
 TamperChk:
+    ;check for presence of all programs (simple checks for now)
+    ld hl,pname_MainBuckingCalculator-1
+        rst 20h                             ;call _Mov10toOP1
+        rst 10h                             ;call _FindSym
+    jp c,TamperChk_tamperfound              ;goto error if program is missing
+    ld hl,pname_BCLengthPriceEditor-1
+        rst 20h                             ;call _Mov10toOP1
+        rst 10h                             ;call _FindSym
+    jp c,TamperChk_tamperfound              ;goto error if program is missing
+    ld hl,pname_BCSetup-1
+        rst 20h                             ;call _Mov10toOP1
+        rst 10h                             ;call _FindSym
+    jp c,TamperChk_tamperfound              ;goto error if program is missing
+    ld hl,pname_BCStatisticsProcessor-1
+        rst 20h                             ;call _Mov10toOP1
+        rst 10h                             ;call _FindSym
+    jp c,TamperChk_tamperfound              ;goto error if program is missing
+    ld hl,pname_BCStatisticsViewer-1
+        rst 20h                             ;call _Mov10toOP1
+        rst 10h                             ;call _FindSym
+    jp c,TamperChk_tamperfound              ;goto error if program is missing
+    ld hl,pname_BCStatisticsUndoer-1
+        rst 20h                             ;call _Mov10toOP1
+        rst 10h                             ;call _FindSym
+    jp c,TamperChk_tamperfound              ;goto error if program is missing
+    ld hl,pname_BCStatisticsMillChooser-1
+        rst 20h                             ;call _Mov10toOP1
+        rst 10h                             ;call _FindSym
+    jp c,TamperChk_tamperfound              ;goto error if program is missing
+
+    ;check validity of program; if first-run, then install versioning data
     ld a,(TamperChk_firstrun_status)
     cp 0
     jp z,TamperChk_laterrun

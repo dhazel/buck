@@ -21,7 +21,6 @@ BC60.asm
       ResetVolatileData 
       ClearErrors 
       BuckInput 
-      Buck 
       Err_s_Overrun 
       ArrayAccess_ne 
       FindByte 
@@ -31,6 +30,7 @@ BC60.asm
       Price2standalone 
       SumWrdArray 
       SumWrdArray_rel 
+      Buck 
       FinMenu 
    BC_basic_calculate : 
       ResetVolatileData 
@@ -38,9 +38,43 @@ BC60.asm
       BuckInput 
       Buck 
       FinMenu 
-BCBuck22.asm 
-   Buck : 
+BC6a.asm 
+   BC : 
+      TamperChk 
+      StatDataInit 
+      SwitchMill 
+   BC_millcompare_calculate : 
+      SwitchMill 
+      ResetVolatileData 
+      ClearErrors 
+      BuckInput 
+      Buck 
+      FinMenu 
+   BC_usercompare_calculate : 
+      ResetVolatileData 
+      ClearErrors 
+      BuckInput 
+      Err_s_Overrun 
+      ArrayAccess_ne 
+      FindByte 
+      CriteriaPassFail 
+      Volume 
+      ArryAccessW_ne 
+      Price2standalone 
+      SumWrdArray 
+      SumWrdArray_rel 
+      Buck 
+      FinMenu 
+   BC_basic_calculate : 
+      ResetVolatileData 
+      ClearErrors 
+      BuckInput 
+      Buck 
+      FinMenu 
+BCBuck23.asm 
+   Buck :     >>> untested <<< 
       ErrTooLong 
+      Err_s_Overrun 
       ArrayAccess 
       ErrTooShort 
       ArrayAccess_ne 
@@ -73,7 +107,7 @@ BCLP2.asm
       CriteriaEditor 
       clearmenu 
       Mult8Bit 
-      Mult8~16Bit 
+      Mult8to16Bit 
       save_data 
       workingmessage 
       StatDataInit 
@@ -99,6 +133,7 @@ bc_userinterface.asm
       ExportResults 
       ErrDataUnused 
       TestPrints 
+      VarDump 
       clearmenu 
       menuhighmessage 
    BCStart :     >>> untested <<< 
@@ -124,7 +159,7 @@ bc_userinterface.asm
       ArryAccessW 
    headerbar : 
 TamperChk.asm 
-   TamperChk : 
+   TamperChk :     >>> untested <<< 
       save_data 
       bigmessage 
       AboutBuck 
@@ -133,7 +168,7 @@ routines/conversion/ConvOP1.asm
       ErrConvOP 
       ConvBlock 
    ConvBlock : 
-      Mult8~16Bit 
+      Mult8to16Bit 
    ErrConvOP : 
       VarDump 
 routines/data/ArrayAccess.asm 
@@ -160,12 +195,12 @@ routines/flags/SetCarryFlag.asm
    SetCarryFlag : 
 routines/flags/SetZeroFlag.asm 
    SetZeroFlag : 
-routines/math/Div8~16Bit.asm 
-   Div8~16Bit : 
-routines/math/Mult8~16Bit.asm 
-   Mult8~16Bit : 
+routines/math/Div8to16Bit.asm 
+   Div8to16Bit : 
 routines/math/Mult8Bit.asm 
    Mult8Bit : 
+routines/math/Mult8to16Bit.asm 
+   Mult8to16Bit : 
 routines/math/SumBytArray.asm 
    SumBytArray : 
 routines/math/SumWrdArray.asm 
@@ -188,18 +223,22 @@ routines/screen/PrintArrayW.asm
    PrintArrayW : 
 routines/screen/PrintArrayWElm.asm 
    PrintArrayWElm : 
-routines/test_functions/buck_testfunctions.asm 
+routines/test_functions/BugCatcher.asm 
+   BugCatcher : 
+routines/test_functions/Gotcha.asm 
+   Gotcha : 
+routines/test_functions/TestPrints.asm 
    TestPrints : 
       PrintArray 
       PrintArrayW 
+routines/test_functions/test_templates.asm 
+routines/test_functions/VarDump.asm 
    VarDump : 
       clearwindow 
       clearmenu 
       PrintArray 
       PrintArrayW 
       PrintErrors 
-   Gotcha : 
-   BugCatcher : 
 routines/TIOS/ArrayToMatRow.asm 
    ArrayToMatRow : 
       MatrixAccess 
@@ -208,7 +247,7 @@ routines/TIOS/ArrayToMatRow.asm
 routines/TIOS/MatrixAccess.asm 
    MatrixAccess : 
       Mult8Bit 
-      Mult8~16Bit 
+      Mult8to16Bit 
       ResetZeroFlag 
       ResetCarryFlag 
       SetCarryFlag 
@@ -224,6 +263,8 @@ routines/TIOS/StringCreate.asm
       ResetZeroFlag 
 routines/user_interface/bigmessage.asm 
    bigmessage : 
+      clearwindow 
+      clearmenu 
 routines/user_interface/CriteriaEditor.asm 
    CriteriaEditor : 
       menu 
@@ -238,7 +279,7 @@ routines/user_interface/CriteriaEditor.asm
       InputInt 
 routines/user_interface/InputInt.asm 
    InputInt : 
-      Mult8~16Bit 
+      Mult8to16Bit 
 routines/user_interface/menu.asm 
    menu : 
 routines/user_interface/menuhighmessage.asm 
@@ -342,7 +383,6 @@ routines/buck/math/Interpolate.asm
       ArrayAccess 
       ErrReverseTaper 
       Mult8Bit 
-      Div8~16Bit 
 routines/buck/math/Price2.asm 
    Price2 : 
       ErrLCVoverrun 

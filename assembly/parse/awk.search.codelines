@@ -19,11 +19,12 @@ BEGIN {
 }
 
 END {
-    print "Files read:"
-    for(element in filearray){
-        print filearray[element]
-    }
+#    print "Files read:"
+#    for(element in filearray){
+#        print filearray[element]
+#    }
     print " "
     print "Total lines of code:"
     print count
+    print " "
 }

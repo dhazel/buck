@@ -370,25 +370,28 @@ x   -> minimal impact to the user, and program cost would be high to implement
 x       a check
 x clear the menu _after_ stat data is exported in FinMenu
 x turn run indicator on for bcstat
-- in guess mode, start with the user's guess as the best price
-    -> his should speed things up significantly
-- make tampercheck verify the existance of all of the TIBASIC programs
+x in guess mode, start with the user's guess as the best price
+x   -> speed increase is debatable
+x make tampercheck verify the existance of all of the TIBASIC programs
+x speed up Buck algorithm
+x   - comment out ArrayAccess and ArryAccessW error checking
+x       - add the "s" iterator overrun check to Buck_main
+x   - in guess mode, start with the user's guess as the best price
+x       -> speed increase is quite marginal, very small
+x       -> could also be done with second-choice 
 - design a straightforward way to maximize the length left in the woods
 - prepare the Buck algorithm for upcoming enhancements
     - price skew number to be used in volume constraint framework
-    - check feasability of adding grade criteria checks
-        - possibly make adding such checks easier
-    - switch copyblock choice function from (>=) to just (>)
-        -> this will reverse the effective priority order and decrease the 
-            number of runtime copyblock activations
-        -> this will also enable specialized copyblock choice criteria like 
-            (percent better value) or similar
-        -> this may also require significant modification to BuckLP2 because of
-            its indexing and selection system
-            -> all of the checks are oriented toward the current reverse display
-                order (that I went to great pain to implement)
-        - add fancy checks to allow ties to be tracked
-            
+x   - switch copyblock choice function from (>=) to just (>)
+x       - simple cp command switch
+x       -> this will reverse the effective priority order and decrease the 
+x           number of runtime copyblock activations
+x       -> this will also enable specialized copyblock choice criteria like 
+x           (percent better value) or similar
+x   - reverse LCV traversal
+x       - remove need for 255 termination
+- debug statdata checking
+
 
 
 
@@ -396,6 +399,11 @@ x turn run indicator on for bcstat
 - determine pricing to sell the calculator
 
 
+- add interrupt timer to halt execution if too much time passes
+- get rid of all LCV 255-termination-centric code
+    - BCLP2
+    - LCVCompaction ?
+    -
 - write input function
 x   -> for numbers only; strings can be input via available routines
 x   -> may be able to use TIBASIC program to call the TI Input function
@@ -411,11 +419,11 @@ x           - obfuscation is heavy regarding how to access Input from assembler
 - check which routines could reference the program global constraints defines 
     and modify them to do so
 - make ResetVolatileData roll "it" over to 255's more elegantly
-- add log grade criteria
+- reconsider adding log grade criteria
     - create input in user interface
-x   - create log_grade input data array
+    - create log_grade input data array
     - add grade to criteria editor
-x       - create grade criteria array
+        - create grade criteria array
     - add grade criteria check
     - add grade price check
     - create grade determination function for Buck
@@ -440,7 +448,6 @@ x       - create grade criteria array
 - update BuckLP2 to use the InputInt function
 - write volume percentage constraint framework
 - rewrite BuckInput to operate more like an editor
-- add interrupt timer to halt execution if too much time passes
 
 
 

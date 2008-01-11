@@ -20,6 +20,8 @@ def interpolate(ux,x,y):
         while x[j] <= ux:           #run up to the vector point above and
                 T = x[j]            #   nearest to the user value.
                 j = j+1 
+                if j == len(x):
+                    print "interpolator: ERROR - ",j," out of range in ",x,", searching for ",ux
 
         if T != ux:
                 yu = ((y[j]-y[j-1])/(x[j]-x[j-1]))*ux-((y[j]-y[j-1])/(x[j]-x[j-1]))*x[j-1]+y[j-1] 

@@ -22,6 +22,7 @@ StringCreate:
     rst 10h                 ;call _FindSym to see if
                             ; variable exists
     jp nc,StringCreate_present
+    pop af                  ;get this off the stack
     jp StringCreate_overwrite
 StringCreate_forceoverwrite:
     call _delvar            ;delete variable if it exists
