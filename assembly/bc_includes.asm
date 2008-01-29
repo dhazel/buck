@@ -51,7 +51,9 @@ _strlen             equ     4957h   ; bc = length of string (hl)
 _divHLbyA           equ     4048h   ; hl = hl/a
 
 _cpop1op2           equ     41FBh	; cp op1,op2
+_op1set1            equ     430Fh	; op1 = floating point 1
 _op2set1            equ     432Fh   ; op2 = floating point 1
+_op4set1            equ     42E7h	; op4 = floating point 1
 _MINUS1             equ     5470h   ; op1 = op1 - 1
 _FPSUB              equ     5474h   ; op1 = op1 - op2
 _FPADD              equ     5478h   ; op1 = op1 + op2
@@ -74,6 +76,8 @@ _setXXop1           equ     4613h   ; convert hex # in A to flt point in op1
 _setXXop2           equ     4617h   ; convert hex # in A to flt point in op2
 _setXXXXop2         equ     461Bh   ; convert hex # in HL to flt point in op2
 _ex_op1_op2         equ     448Fh   ; swap op1,op2
+_ex_op1_op4         equ     448Bh   ; swap op1,op4
+_ex_op2_op4         equ     447Fh   ; swap op2,op4
 _convop1            equ     5577h   ; convert flt point in op1 to hex # in ade (max 9999) (destroys OP1)
 _ROUND              equ     54C0h   ; round op1; D holds decimal place to round to
 

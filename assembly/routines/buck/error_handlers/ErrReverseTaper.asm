@@ -6,13 +6,12 @@
 ;  NOTE: This is a special error handler routine designed
 ;           specifically for the Interpolate routine
 ;  total: 16b
-;  tested: yes
+;  tested: no
 ;============================================================
-    .db 0  ;count occurences
 ErrReverseTaper: 
     ld hl,err_occured
     ld (hl),1
-    ld hl,ErrReverseTaper-1
+    ld hl,err_ReverseTaper_occured
     inc (hl)
     pop de
     ld d,0

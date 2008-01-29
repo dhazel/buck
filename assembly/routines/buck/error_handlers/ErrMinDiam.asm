@@ -6,16 +6,14 @@
 ;  NOTE: This is a special error handler routine designed
 ;           specifically for the Volume routine
 ;  total: 26b
-;  tested: yes
+;  tested: no
 ;============================================================
-    .db 0  ;count occurences
-    .db 5  ;greatest error margin (minimum diameter is 5 inches)
 ErrMinDiam:
     ld hl,err_occured
     ld (hl),1
-    ld hl,ErrMinDiam-2
+    ld hl,err_MinDiam_occured
     inc (hl)
-    inc hl
+    ld hl,err_MinDiam_bound
     cp (hl) ;keep track of greatest error margin
     jp nc,ErrMinDiam_overerr
     ld (hl),a

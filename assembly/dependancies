@@ -15,7 +15,8 @@ BC60.asm
       ResetVolatileData 
       ClearErrors 
       BuckInput 
-      Buck 
+      Handoff_BCK23 
+      Bcalculate 
       FinMenu 
    BC_usercompare_calculate : 
       ResetVolatileData 
@@ -23,61 +24,32 @@ BC60.asm
       BuckInput 
       Err_s_Overrun 
       ArrayAccess_ne 
-      FindByte 
-      CriteriaPassFail 
-      Volume 
-      ArryAccessW_ne 
-      Price2standalone 
-      SumWrdArray 
-      SumWrdArray_rel 
-      Buck 
+      Bcalculate 
+      Handoff_BCK23 
       FinMenu 
    BC_basic_calculate : 
       ResetVolatileData 
       ClearErrors 
       BuckInput 
-      Buck 
+      Handoff_BCK23 
+      Bcalculate 
       FinMenu 
-BC6a.asm 
-   BC : 
+BC.asm 
+bc_data.asm 
+bc_includes.asm 
+BCK23.asm 
+   BCK :     >>> untested <<< 
       TamperChk 
-      StatDataInit 
-      SwitchMill 
-   BC_millcompare_calculate : 
-      SwitchMill 
-      ResetVolatileData 
-      ClearErrors 
-      BuckInput 
       Buck 
-      FinMenu 
-   BC_usercompare_calculate : 
-      ResetVolatileData 
-      ClearErrors 
-      BuckInput 
-      Err_s_Overrun 
-      ArrayAccess_ne 
-      FindByte 
-      CriteriaPassFail 
-      Volume 
-      ArryAccessW_ne 
-      Price2standalone 
-      SumWrdArray 
-      SumWrdArray_rel 
-      Buck 
-      FinMenu 
-   BC_basic_calculate : 
-      ResetVolatileData 
-      ClearErrors 
-      BuckInput 
-      Buck 
-      FinMenu 
-BCBuck23.asm 
+      copyover_volatile 
+      save_data 
    Buck :     >>> untested <<< 
+      MatrixAccess 
       ErrTooLong 
+      ArrayAccess_ne 
       Err_s_Overrun 
       ArrayAccess 
       ErrTooShort 
-      ArrayAccess_ne 
       SumBytArray 
       ArryAccessW 
       Interpolate 
@@ -86,8 +58,6 @@ BCBuck23.asm
       Price2 
       SumWrdArray 
       SumWrdArray_rel 
-bc_data.asm 
-bc_includes.asm 
 BCLP2.asm 
    LengthPrice : 
       TamperChk 
@@ -130,11 +100,11 @@ bc_userinterface.asm
       FinDisplay3 
       menu 
       PrintErrors 
+      clearmenu 
       ExportResults 
       ErrDataUnused 
       TestPrints 
       VarDump 
-      clearmenu 
       menuhighmessage 
    BCStart :     >>> untested <<< 
       menu 
@@ -144,7 +114,7 @@ bc_userinterface.asm
       BC_usercompare_calculate 
       BC_millcompare_calculate 
       menuhighmessage 
-   BuckInput : 
+   BuckInput :     >>> untested <<< 
       ClearInputs 
       menu 
       clearmenumessage 
@@ -228,7 +198,7 @@ routines/test_functions/BugCatcher.asm
 routines/test_functions/Gotcha.asm 
    Gotcha : 
 routines/test_functions/TestPrints.asm 
-   TestPrints : 
+   TestPrints :     >>> untested <<< 
       PrintArray 
       PrintArrayW 
 routines/test_functions/test_templates.asm 
@@ -294,6 +264,8 @@ routines/BC/data/ClearInputs.asm
    ClearInputs : 
 routines/BC/data/copyover_data.asm 
    copyover_data :     >>> untested <<< 
+routines/BC/data/copyover_volatile.asm 
+   copyover_volatile :     >>> untested <<< 
 routines/BC/data/ExportResults.asm 
    ExportResults :     >>> untested <<< 
       MatrixAccess 
@@ -302,6 +274,14 @@ routines/BC/data/ExportResults.asm
       ArrayToMatRow 
       ResetCarryFlag 
       SetCarryFlag 
+routines/BC/data/FindInLCV.asm 
+   FindInLCV :     >>> untested <<< 
+      ArrayAccess 
+      ArrayAccess_ne 
+      FindByte 
+      CriteriaPassFail 
+      ResetZeroFlag 
+      SetZeroFlag 
 routines/BC/data/LCVCompaction.asm 
    LCVCompaction : 
       FindByte 
@@ -314,7 +294,6 @@ routines/BC/data/StatDataInit.asm
       ErrStatDataMissing 
       MatrixZero 
       StringCreate 
-      LCVCompaction 
       ArrayToMatRow 
    ErrStatDataMissing :     >>> untested <<< 
       bigmessage 
@@ -324,6 +303,11 @@ routines/BC/data/SwitchMill.asm
       save_data 
       MatrixAccess 
       StatDataInit 
+routines/BC/handoff/Handoff_BCK23.asm 
+   Handoff_BCK23 :     >>> untested <<< 
+      copyover_data 
+      copyover_volatile 
+      bigmessage 
 routines/BC/handoff/Handoff_BCLP2.asm 
    Handoff_BCLP2 : 
       copyover_data 
@@ -338,34 +322,34 @@ routines/buck/algorithm/CriteriaPassFail.asm
 routines/buck/data/ResetVolatileData.asm 
    ResetVolatileData : 
 routines/buck/error_handlers/ClearErrors.asm 
-   ClearErrors : 
+   ClearErrors :     >>> untested <<< 
 routines/buck/error_handlers/ErrDataUnused.asm 
    ErrDataUnused : 
 routines/buck/error_handlers/ErrIntpolatOverrun.asm 
-   ErrIntpolatOverrun : 
+   ErrIntpolatOverrun :     >>> untested <<< 
       VarDump 
       Interpolate_endIntpolat 
 routines/buck/error_handlers/ErrLCVoverrun.asm 
-   ErrLCVoverrun : 
+   ErrLCVoverrun :     >>> untested <<< 
       VarDump 
 routines/buck/error_handlers/ErrMaxDiam.asm 
-   ErrMaxDiam : 
+   ErrMaxDiam :     >>> untested <<< 
       VarDump 
       Volume_fi7 
 routines/buck/error_handlers/ErrMaxLgth.asm 
-   ErrMaxLgth : 
+   ErrMaxLgth :     >>> untested <<< 
       VarDump 
       Volume_fi7 
 routines/buck/error_handlers/ErrMinDiam.asm 
-   ErrMinDiam : 
+   ErrMinDiam :     >>> untested <<< 
       VarDump 
       Volume_fi7 
 routines/buck/error_handlers/ErrMinLgth.asm 
-   ErrMinLgth : 
+   ErrMinLgth :     >>> untested <<< 
       VarDump 
       Volume_fi7 
 routines/buck/error_handlers/ErrReverseTaper.asm 
-   ErrReverseTaper : 
+   ErrReverseTaper :     >>> untested <<< 
       VarDump 
       Interpolate_endIntpolat 
 routines/buck/error_handlers/Err_s_Overrun.asm 
@@ -377,6 +361,17 @@ routines/buck/error_handlers/ErrTooLong.asm
 routines/buck/error_handlers/ErrTooShort.asm 
    ErrTooShort : 
       VarDump 
+routines/buck/math/Bcalculate.asm 
+   Bcalculate :     >>> untested <<< 
+      Err_s_Overrun 
+      FindInLCV 
+      ArrayAccess_ne 
+      Volume 
+      ArryAccessW 
+      Price2standalone 
+      ArrayAccess 
+      SumWrdArray 
+      SumWrdArray_rel 
 routines/buck/math/Interpolate.asm 
    Interpolate : 
       ErrIntpolatOverrun 
@@ -384,13 +379,13 @@ routines/buck/math/Interpolate.asm
       ErrReverseTaper 
       Mult8Bit 
 routines/buck/math/Price2.asm 
-   Price2 : 
+   Price2 :     >>> untested <<< 
       ErrLCVoverrun 
       ArryAccessW_ne 
+      ArrayAccess_ne 
       ConvOP1 
 routines/buck/math/Price2standalone.asm 
-   Price2standalone : 
-      FindByte 
+   Price2standalone :     >>> untested <<< 
       Price2 
 routines/buck/math/Volume.asm 
    Volume : 

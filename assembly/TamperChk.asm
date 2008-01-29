@@ -2,6 +2,7 @@
 
 ;* TamperChk -- the tamper/piracy checking routine
 ;*******************************************************************************
+#ifndef DEBUG
 
 ;============================================================
 ; TamperChk -- This is the tamper checking routine. It writes
@@ -36,31 +37,35 @@ TamperChk:
     ld hl,pname_MainBuckingCalculator-1
         rst 20h                             ;call _Mov10toOP1
         rst 10h                             ;call _FindSym
-    jp c,TamperChk_tamperfound              ;goto error if program is missing
+        jp c,TamperChk_tamperfound          ;goto error if program is missing
     ld hl,pname_BCLengthPriceEditor-1
         rst 20h                             ;call _Mov10toOP1
         rst 10h                             ;call _FindSym
-    jp c,TamperChk_tamperfound              ;goto error if program is missing
+        jp c,TamperChk_tamperfound          ;goto error if program is missing
     ld hl,pname_BCSetup-1
         rst 20h                             ;call _Mov10toOP1
         rst 10h                             ;call _FindSym
-    jp c,TamperChk_tamperfound              ;goto error if program is missing
+        jp c,TamperChk_tamperfound          ;goto error if program is missing
+    ld hl,pname_BCBuckingAlgorithm-1
+        rst 20h                             ;call _Mov10toOP1
+        rst 10h                             ;call _FindSym
+        jp c,TamperChk_tamperfound          ;goto error if program is missing
     ld hl,pname_BCStatisticsProcessor-1
         rst 20h                             ;call _Mov10toOP1
         rst 10h                             ;call _FindSym
-    jp c,TamperChk_tamperfound              ;goto error if program is missing
+        jp c,TamperChk_tamperfound          ;goto error if program is missing
     ld hl,pname_BCStatisticsViewer-1
         rst 20h                             ;call _Mov10toOP1
         rst 10h                             ;call _FindSym
-    jp c,TamperChk_tamperfound              ;goto error if program is missing
+        jp c,TamperChk_tamperfound          ;goto error if program is missing
     ld hl,pname_BCStatisticsUndoer-1
         rst 20h                             ;call _Mov10toOP1
         rst 10h                             ;call _FindSym
-    jp c,TamperChk_tamperfound              ;goto error if program is missing
+        jp c,TamperChk_tamperfound          ;goto error if program is missing
     ld hl,pname_BCStatisticsMillChooser-1
         rst 20h                             ;call _Mov10toOP1
         rst 10h                             ;call _FindSym
-    jp c,TamperChk_tamperfound              ;goto error if program is missing
+        jp c,TamperChk_tamperfound          ;goto error if program is missing
 
     ;check validity of program; if first-run, then install versioning data
     ld a,(TamperChk_firstrun_status)
@@ -164,4 +169,4 @@ TamperChk_tamperfound:
 
     ret         ;return (just in case!)
 
-
+#endif

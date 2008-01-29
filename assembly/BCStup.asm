@@ -533,3 +533,4 @@ BCSetup_putarrow: ;places a selection arrow on the drawsetup screen
     ret
 
 
+address_after_prog: $

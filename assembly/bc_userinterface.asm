@@ -115,6 +115,9 @@ FinMenu_stat_choice3:
     ld a,3
     jp FinMenu_stat_choice
 FinMenu_stat_choice:
+    ;clear the menu
+    call clearmenu
+
     ;export the results
     call ExportResults
     jp c,ErrDataUnused
@@ -260,7 +263,7 @@ BCStart_notimplemented:
 ;  output: variables -- log, log_dia, length, Li
 ;  affects: assume everything (I'm lazy right now)
 ;  total: 582b
-;  tested: yes
+;  tested: no
 ;   NOTE: this routine is made to be called
 ;============================================================
     jp BuckInput ;just in case!
@@ -560,6 +563,12 @@ BuckInput_end:
     ld a,(hl)
     ld (length),a
     ld (Li),a
+
+    ;copy raw data into user_guess_result_vars
+    ld hl,data_inputs_start                         ;source
+    ld de,user_guess_result_vars                    ;destination
+    ld bc,user_sum_p - user_guess_result_vars       ;size
+    ldir
     
     call _cursoroff             ;turn blinking cursor off
     call _clrScrn

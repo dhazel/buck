@@ -4,15 +4,16 @@
 ; Price2 -- calculates the price of a given log
 ;  input:   C   = length of log (in feet)
 ;           OP1 = volume of log 
+;           OP4 = volume constraint price multiplication factor
 ;           LCV_size = size (from zero) of the LCV array
-;           IX = index of current LCV (and thus price) element
+;           IX = pointer to index number of current LCV element
 ;           prices = array of corresponding prices 
 ;                   per thousand board-feet (mbf)
 ;  output:  DE  = (price * 10)
 ;  affects: assume everything
 ;           * does not affect IX
 ;  total: 44b/239t (excluding func calls, including ret)
-;  tested: yes
+;  tested: no
 ;============================================================
 Price2:
     ;[c == length; op1 == volume]
@@ -50,8 +51,21 @@ Price2:
     call _setXXXXop2;            price = (Volume/1000) * price 
     call _FPMULT
 
-    call ConvOP1
+    ;[check for volume constraint]
+    ld b,(ix)
+    ld hl,vol_constrain
+    call ArrayAccess_ne
+    ld a,0
+    cp (hl)
+    jp z,Price2_endPrice
+
+    ;[multiply by the volume constraint factor]
+    call _ex_op2_op4
+    call _FPMULT
+    call _ex_op2_op4
+
 Price2_endPrice:    ;    return price
+    call ConvOP1
                     ;
     ;[de == (price * 10)]
     ;[B is not still s]

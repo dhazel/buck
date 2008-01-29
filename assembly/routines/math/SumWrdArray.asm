@@ -7,7 +7,7 @@
 ;  output: HL = the sum of the elements
 ;  affects: IX -> points past end of array
 ;           DE -> holds last element of array
-;           C = B
+;           C <- B
 ;  total: 20b/127t (minimum (no looping), including ret)
 ;  tested: yes
 ;============================================================

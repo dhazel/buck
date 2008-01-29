@@ -27,45 +27,78 @@ StatDataInit:
     ld a,3                      ;dimensions
     call MatrixAccess
     pop hl
-    jp nz,StatDataInit_checkmill2
-    call StatDataInit_initmill
+    push af
+    call z,StatDataInit_initmill
+    pop af
+    call nz,StatDataInit_checkdims
 StatDataInit_checkmill2:
     ld hl,mill2_matrix_name
     push hl
     ld a,3                      ;dimensions
     call MatrixAccess
     pop hl
-    jp nz,StatDataInit_checkmill3
-    call StatDataInit_initmill
+    push af
+    call z,StatDataInit_initmill
+    pop af
+    call nz,StatDataInit_checkdims
 StatDataInit_checkmill3:
     ld hl,mill3_matrix_name
     push hl
     ld a,3                      ;dimensions
     call MatrixAccess
     pop hl
-    jp nz,StatDataInit_checkmill4
-    call StatDataInit_initmill
+    push af
+    call z,StatDataInit_initmill
+    pop af
+    call nz,StatDataInit_checkdims
 StatDataInit_checkmill4:
     ld hl,millcopy_matrix_name
     push hl
     ld a,3                      ;dimensions
     call MatrixAccess
     pop hl
-    jp nz,StatDataInit_check1over
-    call StatDataInit_initmill
+    push af
+    call z,StatDataInit_initmill
+    pop af
+    call nz,StatDataInit_checkdims
     jp StatDataInit_check1over
+StatDataInit_checkdims: ;callable section ;check dimensions
+    ; input: D == rows
+    ;        E == columns
+        ld a,d
+        cp _statdata_rows
+        jp c,StatDataInit_initmill
+        ld a,e
+        cp _statdata_columns
+        jp c,StatDataInit_initmill
+        ret
 StatDataInit_initmill:  ;callable section ;initialize the mill matrix
     ; input: HL -- pointer to mill matrix name
         push hl
         call ErrStatDataMissing
-        pop hl
+        pop hl                      ;mill stat data matrix name
         ld d,_statdata_rows         ;rows
         ld e,_statdata_columns      ;columns
         ld a,2                      ;create
         push hl
         call MatrixAccess
-        pop hl                      ;mill name
+        pop hl                      ;mill stat data matrix name
+        push hl
         call MatrixZero             ;fill with zeros
+        ld a,(vol_constraint_percent);A <- volume constraint percentage
+        call _setXXop1              ;OP1 <- volume constraint percentage
+        pop hl                      ;mill stat data matrix name
+        push hl
+        ld d,_statdata_rows         ;last row
+        ld e,9                      ;column 9
+        ld a,1                      ;write
+        call MatrixAccess
+        call _op1set1               ;OP1 <- reset price-skew-factor
+        pop hl                      ;mill stat data matrix name
+        ld d,_statdata_rows         ;last row
+        ld e,8                      ;column 8
+        ld a,1                      ;write
+        call MatrixAccess
         ret
 StatDataInit_check1over:
 
@@ -128,18 +161,24 @@ StatDataInit_nonameinit:
     push hl
     call MatrixZero
 
-    ;remove repeat elements from the LCV data
-    call LCVCompaction
-
     ;fill current mill matrix first row with LCV elements
     pop hl                  ;mill matrix name
-    ld bc,LCVcompact        ;data array
+    push hl
+    ld bc,LCV               ;data array
     ld d,1                  ;matrix row number
-    ld a,(LCVcompact_size)  ;length of data array
+    ld a,(LCV_size)         ;length of data array
     inc a                   ;   index from 1
     ld e,a
     ld a,0                  ;databyte array
     call ArrayToMatRow  
+
+    ;fill the second-to-last row with the volume constraint identifiers
+    pop hl                  ;mill matrix name
+    ld bc,vol_constrain     ;data array
+    ld d,6                  ;row 6
+    ld e,20                 ;20 elements long
+    ld a,0                  ;databyte array
+    call ArrayToMatRow
 
     ;return
     call _runindicoff

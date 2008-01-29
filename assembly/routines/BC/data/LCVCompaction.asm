@@ -11,6 +11,12 @@
 ;  total: 71b
 ;  tested: yes
 ;===============================================================================
+    jp LCVCompaction        ;just in case
+;LCVcompact is where the LCV is copied when repeat elements are removed for the 
+;   statistics matrices
+LCVcompact: .db 17,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255 
+LCVcompact_size: .db 0 ;number of elements (starting from 0) in LCVcompact
+;---------------------------
 LCVCompaction:
     ;copy LCV_size into LCVcompact_size
     ld a,(LCV_size)

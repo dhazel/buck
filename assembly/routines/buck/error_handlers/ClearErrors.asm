@@ -7,40 +7,37 @@
 ;  output: resets all error data fields
 ;  affects: most everything
 ;  total: 71b/290t (including ret)
-;  tested: yes
+;  tested: no
 ;============================================================
 ClearErrors:
     ld a,0                      ;reset FinMenu_menu_data error display settings
     ld (FinMenu_menu_data + 8),a
 
-    ld hl,err_occured           ;reset the err_occured notification variable
+    ld hl,err_MinDiam_occured
     ld (hl),0
+    ld hl,err_MinDiam_bound
+    ld (hl),_minimum_top_diameter
     
-    ld hl,ErrMinDiam-2
+    ld hl,err_MaxDiam_occured
     ld (hl),0
-    ld hl,ErrMinDiam-1
-    ld (hl),5
-    
-    ld hl,ErrMaxDiam-2
-    ld (hl),0
-    ld hl,ErrMaxDiam-1
-    ld (hl),32
+    ld hl,err_MaxDiam_bound
+    ld (hl),_maximum_top_diameter
 
-    ld hl,ErrMinLgth-2
+    ld hl,err_MinLgth_occured
     ld (hl),0
-    ld hl,ErrMinLgth-1
-    ld (hl),1
+    ld hl,err_MinLgth_bound
+    ld (hl),1   ;determined at runtime
 
-    ld hl,ErrMaxLgth-2
+    ld hl,err_MaxLgth_occured
     ld (hl),0
-    ld hl,ErrMaxLgth-1
-    ld (hl),40
+    ld hl,err_MaxLgth_bound
+    ld (hl),_maximum_log_length
 
-    ld hl,ErrReverseTaper-1
+    ld hl,err_ReverseTaper_occured
     ld (hl),0
 
-    ld hl,ErrIntpolatOverrun-1
+    ld hl,err_IntpolatOverrun_occured
     ld (hl),0
-    
+
     ret
 

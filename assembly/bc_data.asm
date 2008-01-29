@@ -8,6 +8,8 @@
 ;   NOTE: this is useful as a quick overview of program limits and settings
 ;   NOTE: some routines reference these settings, but not all of them (yet)
 ;#define DEBUG   ;turn debugging on or off by un/commenting this line
+;   NOTE: in debug-mode TamperChk is turned off, only "basic" calculation-mode
+;           is operational, and BCStup is made uncallable
 
 ;program versioning data
 #define _version_ID_name    "%btcv600"  ;TIOS variable holding the ID code
@@ -18,6 +20,7 @@
 pname_MainBuckingCalculator: .db 4,"BC60"
 pname_BCLengthPriceEditor: .db 5,"BCLP2"
 pname_BCSetup: .db 6,"BCStup"
+pname_BCBuckingAlgorithm: .db 5,"BCK23"
 pname_BCStatisticsProcessor: .db 6,"bcstpr" ;this and below are TIBASIC programs
 pname_BCStatisticsViewer: .db 6,"bcstat"
 pname_BCStatisticsUndoer: .db 6,"bcstun"
@@ -36,9 +39,9 @@ pname_BCStatisticsMillChooser: .db 7,"bchmill"
 #define _allow_BCLP2_criteria_traversal 1  
 
 ;general data settings
-#define _bcout_rows 5           ;bcout is the algorithm matrix output to TIOS
+#define _bcout_rows 6           ;bcout is the algorithm matrix output to TIOS
 #define _bcout_columns 6        ;   see the OutputResults routine for more info
-#define _statdata_rows 6        ;bcmill1, bcmill2, and bcmill3
+#define _statdata_rows 7        ;bcmill1, bcmill2, and bcmill3
 #define _statdata_columns 20    ;   total length of the LCV
 
 ;general data names
@@ -55,9 +58,6 @@ millcopy_name_var: .db 7,"bcsaven"
 ;general data
 mill_fill_name: .db "------  ",0  ;NOTE: mill name data regions are same size
                     
-;bucking algorithm error status
-err_occured: .db 0 ;status whether or not any errors transpired
-
 ;[BEGIN SAVEABLE]===============================================================
 data_start:
 
@@ -70,6 +70,7 @@ mill1_distance: .db 0
 prices_mill1: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 LCV_mill1: .db 1,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255
 minmax_td_mill1: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
+vol_constrain_mill1: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;volume criteria
 mill1_LCV_size: .db 0 ;number of elements (starting from 0) in the LCV
 mill2_name: .db "rsg     ",0  
 mill2_number: .db 1
@@ -77,6 +78,7 @@ mill2_distance: .db 0
 prices_mill2: .dw 300,300,475,475,475,475,475,475,475,475,575,575,625,625,625,0,0,0,0,0
 LCV_mill2: .db 15,13,31,29,27,25,23,21,19,17,35,33,41,39,37,255,0,0,0,0,255
 minmax_td_mill2: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
+vol_constrain_mill2: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;volume criteria
 mill2_LCV_size: .db 14 ;number of elements (starting from 0) in the LCV
 mill3_name: .db "freres  ",0 
 mill3_number: .db 2
@@ -84,6 +86,7 @@ mill3_distance: .db 0
 prices_mill3: .dw 580,580,580,580,580,580,580,580,580,0,0,0,0,0,0,0,0,0,0,0
 LCV_mill3: .db 12,13,23,31,39,33,18,27,35,255,0,0,0,0,0,0,0,0,0,0,255
 minmax_td_mill3: .dw 8,8,8,8,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
+vol_constrain_mill3: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;volume criteria
 mill3_LCV_size: .db 8 ;number of elements (starting from 0) in the LCV
 mill3_end:  ;marks the end of mill3 data
 ;/multiple mills----------------------------------------------
@@ -99,18 +102,17 @@ mill_distance: .db 0
 data_LP_start:
 ;prices: .dw 650,650,650,650,650,650,650,650,650,650,650,650,650,650,650,650,650,650,650,650 
 prices: .dw 580,580,580,580,580,580,580,580,580,580,580,580,580,580,580,580,580,580,580,580 
-                    ;               #Lengths-to-Check Vector (255 terminated)
-                    ;    LCV = [40,38,36,34,32,30,28,26,24,22,20,18,16,255]
-;LCV: .db 17,18,19,20,21,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255 ;speed test lengths
-LCV: .db 23,31,39,33,18,27,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0 
-                    ;   ; __this *needs* to be 255 terminated initially !!!
-                        ;   also, trim should be added when this array is input
+                    ;               #Lengths-to-Check Vector 
+                    ;    LCV = [40,38,36,34,32,30,28,26,24,22,20,18,16]
+LCV: .db 23,31,39,33,18,27,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;(includes trim)
 
 minmax_td: .dw 8,8,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max top diameter
                                                        ; criteria. In each
                                                        ; element the first byte
                                                        ; is the min diam and the
                                                        ; second byte is the max
+vol_constrain: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;volume constraint
+                                                           ; criteria. (0/1)
 LCV_size: .db 6 ;number of elements (starting from 0) in the LCV
 data_LP_end:
 ;/mill data--------------------------------------------------------------------
@@ -119,6 +121,7 @@ statistics: .db 0  ;[on/off] [adds/removes complexity from the GUI]
 mill_number: .db 0 ;mill to switch to when SwitchMill routine is run
 calculation_mode: .db 0 ;0 = basic calculate, 1 = user compare, 2 = mill compare
 trucking_cost: .db 0  ;[TODO]
+vol_constraint_percent: .db 0 ;percent minimum production for constrained logs
 
 max_length: .db 151 ;[TODO: this should be calculated based on number of LCV 
                     ;           elements and length of tree]
@@ -127,45 +130,57 @@ max_length: .db 151 ;[TODO: this should be calculated based on number of LCV
                     ;           provides an option to cancel execution after a 
                     ;           certain time period has transpired
 
-data_end:
-;/[END SAVEABLE]================================================================
-
 
 ;[BEGIN INPUTS]=================================================================
 data_inputs_start:
 ;[NOTE -- (log description arrays) log and log_dia to be requested as inputs]
-log: .db 0,150,0,0,0,0
+raw_log: .db 0,0,0,0,0,0    ;the raw length inputs (must match the outputs)
+raw_dia: .db 0,0,0,0,0,0    ;the raw diameter inputs (must match the outputs)
 log_dia: .db 30,6,0,0,0,0
-length: .db 150 ;[total log length variable]
+log: .db 0,150,0,0,0,0
+length: .db 0 ;[total log length variable, corresponds to last "log" element]
 data_inputs_end:
 ;/[END INPUTS]==================================================================
 
+data_end:
+;/[END SAVEABLE]================================================================
+
+;Error Handlers' data
+err_occured: .db 0 ;status whether or not any errors transpired
+err_MinDiam_occured: .db 0
+err_MinDiam_bound: .db _minimum_top_diameter
+err_MaxDiam_occured: .db 0
+err_MaxDiam_bound: .db _maximum_top_diameter
+err_MinLgth_occured: .db 0
+err_MinLgth_bound: .db 0  ;determined at runtime
+err_MaxLgth_occured: .db 0
+err_MaxLgth_bound: .db _maximum_log_length
+err_ReverseTaper_occured: .db 0
+err_IntpolatOverrun_occured: .db 0
 
 ;[BEGIN VOLATILE DATA]==========================================================
 data_volatile_start:
 
-                    ;
-                    ;    it = [255,255,255,255,255,255]  #iteration tracker 
-it: .db 255,255,255,255,255,255;            #(this currently is used to track 
-                    ;                       # index of LCV)
-                    ;LCVcompact is where the LCV is copied when repeat 
-                    ;   elements are removed for the statistics matrices
-LCVcompact: .db 17,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255 
-LCVcompact_size: .db 0 ;number of elements (starting from 0) in LCVcompact
+it: .db 0,0,0,0,0,0 ;         #(this currently is used to track index of LCV)
 
+;Results data
+data_results_start:
 ;result variable offsets
-#define _result_offset_lengths  0
-#define _result_offset_sum_p    6
-#define _result_offset_p        8
-#define _result_offset_v        20
-#define _result_offset_td       32
-#define _result_offset_siter    38
-#define _result_offset_sum_v    39
-#define _result_offset_mill_num 41
-#define _result_offset_name     42
+#define _result_offset_lengths      0
+#define _result_offset_td           6
+#define _result_offset_sum_p        12
+#define _result_offset_p            14
+#define _result_offset_v            26
+#define _result_offset_siter        38
+#define _result_offset_sum_v        39
+#define _result_offset_LCV_index    41
+#define _result_offset_mill_num     47
+#define _result_offset_name         48
 
 ;   -- order is important
 ;   NOTE: result variable order must coincide with all other result variables
+;   NOTE: the first two result variables must also directly correspond with the
+;           first two input variables (for recalculation purposes)
 ;   NOTE: the result variable offsets above must correctly indicate variable 
 ;           locations
 ;   NOTE: anything between transient_result_vars and firstchoice_result_vars
@@ -173,33 +188,35 @@ LCVcompact_size: .db 0 ;number of elements (starting from 0) in LCVcompact
 ;           consideration
 transient_result_vars:
 Li: .db 150,0,0,0,0,0;    Li = [L,0,0,0,0,0]             #length iterators
+td: .db 0,0,0,0,0,0 ;    td = [0,0,0,0,0,0]              #top diameter tracker
 sum_p: .dw 0 
 p:  .dw 0,0,0,0,0,0 ;    p = [0,0,0,0,0,0]               #price tracker
 v:  .dw 0,0,0,0,0,0 ;    v = [0,0,0,0,0,0]               #volume tracker
-td: .db 0,0,0,0,0,0 ;    td = [0,0,0,0,0,0]              #top diameter tracker
 status_iterator: .db 0 ;simple storage tracking the all important "s" iterator
 
 ;   -- order is important
 firstchoice_result_vars:
 Lf:  .db 0,0,0,0,0,0;    Lf = [0,0,0,0,0,0]              #lengths tracker
+td1: .db 0,0,0,0,0,0;    td1 = [0,0,0,0,0,0]
 sum_p1: .dw 0
 p1: .dw 0,0,0,0,0,0 ;    p1 = [0,0,0,0,0,0]
 v1: .dw 0,0,0,0,0,0 ;    v1 = [0,0,0,0,0,0]
-td1: .db 0,0,0,0,0,0;    td1 = [0,0,0,0,0,0]
 s_iterator1: .db 0 ;simple storage tracking the all important "s" iterator
 sum_v1: .dw 0
+LCV_index1: .db 0,0,0,0,0,0 
 firstchoice_mill_number: .db 0
 firstchoice_result_name: .db 0,0,0,0,0,0,0,0,0
 
 ;   -- order is important
 secondchoice_result_vars:
 Lf2: .db 0,0,0,0,0,0;    Lf2 = [0,0,0,0,0,0]          #secondary lengths tracker
+td2: .db 0,0,0,0,0,0;    td2 = [0,0,0,0,0,0]
 sum_p2: .dw 0
 p2: .dw 0,0,0,0,0,0 ;    p2 = [0,0,0,0,0,0]
 v2: .dw 0,0,0,0,0,0 ;    v2 = [0,0,0,0,0,0]
-td2: .db 0,0,0,0,0,0;    td2 = [0,0,0,0,0,0]
 s_iterator2: .db 0 ;simple storage tracking the all important "s" iterator
 sum_v2: .dw 0
+LCV_index2: .db 0,0,0,0,0,0 
 secondchoice_mill_number: .db 0
 secondchoice_result_name: .db 0,0,0,0,0,0,0,0,0
 
@@ -207,12 +224,13 @@ secondchoice_result_name: .db 0,0,0,0,0,0,0,0,0
 ;   -- order is important
 user_guess_result_vars:
 user_l: .db 0,0,0,0,0,0
+user_td: .db 0,0,0,0,0,0
 user_sum_p: .dw 0
 user_p: .dw 0,0,0,0,0,0
 user_v: .dw 0,0,0,0,0,0
-user_td: .db 0,0,0,0,0,0
 s_iteratorU: .db 0 ;simple storage tracking the all important "s" iterator
 user_sum_v: .dw 0
+user_LCV_index: .db 0,0,0,0,0,0 
 user_guess_mill_number: .db 0
 user_guess_result_name: .db 0,0,0,0,0,0,0,0,0
 
@@ -240,27 +258,31 @@ data_volatile_end:
 ;   -- order is important
 mill1_result_vars: ; (these must persist through volatile-data wipes)
 mill1_l: .db 0,0,0,0,0,0
+mill1_td: .db 0,0,0,0,0,0
 mill1_sum_p: .dw 0
 mill1_p: .dw 0,0,0,0,0,0
 mill1_v: .dw 0,0,0,0,0,0
-mill1_td: .db 0,0,0,0,0,0
 s_iterator_m1: .db 0 ;simple storage tracking the all important "s" iterator
 mill1_sum_v: .dw 0
+mill1_LCV_index: .db 0,0,0,0,0,0 
 mill1_mill_number: .db 0
 mill1_result_name: .db 0,0,0,0,0,0,0,0,0
  
 ;   -- order is important
 mill2_result_vars: ; (these must persist through volatile-data wipes)
 mill2_l: .db 0,0,0,0,0,0
+mill2_td: .db 0,0,0,0,0,0
 mill2_sum_p: .dw 0
 mill2_p: .dw 0,0,0,0,0,0
 mill2_v: .dw 0,0,0,0,0,0
-mill2_td: .db 0,0,0,0,0,0
 s_iterator_m2: .db 0 ;simple storage tracking the all important "s" iterator
 mill2_sum_v: .dw 0
+mill2_LCV_index: .db 0,0,0,0,0,0 
 mill2_mill_number: .db 1
 mill2_result_name: .db 0,0,0,0,0,0,0,0,0
  
+data_results_end:
+
 ;FinDisplay data
 FinDisplay_data_pointer:    .dw 0   ;pointer to the display data
 FinDisplay_unit_designator: .db 0   ;unit symbol to be displayed in the top row

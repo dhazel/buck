@@ -5,21 +5,23 @@
 ;           matrix variable, according to the program specification
 ;  input: A == choice number by FinDisplay column starting from 1
 ;  output: the TIOS matrix variable, bcout, is updated
-;            - .-------------.-------------.------------.
-;              |state status | mill number | butt diam  |
-;              |-------------^-------------^------------|
-;              |lengths array                           |
-;              |----------------------------------------|
-;              |volumes array                           |
-;              |----------------------------------------|
-;              |prices array                            |
-;              |----------------------------------------|
-;              |diameter array                          |
-;              *----------------------------------------*
+;            - .-------------.-------------.-----------.----------.
+;              |state_status | mill_number | butt_diam | undoable |
+;              |-------------^-------------^-----------^----------|
+;              |lengths array                                     |
+;              |--------------------------------------------------|
+;              |volumes array                                     |
+;              |--------------------------------------------------|
+;              |prices array                                      |
+;              |--------------------------------------------------|
+;              |diameter array                                    |
+;              |--------------------------------------------------|
+;              |LCV index array                                   |
+;              *--------------------------------------------------*
 ;              - state status variable
 ;                - toggled between 0 and 1 to designate fresh and stale data
 ;                   respectively
-;           carry flag is set and nothing is done if the matrix still contains
+;           - carry flag is set and nothing is done if the matrix still contains
 ;               fresh data
 ;  affects: assume everything
 ;  total: 241b
@@ -158,6 +160,19 @@ ExportResults_zeromatrix:
     ld a,0                      ;databyte array
     ld hl,output_matrix_name
     ld d,5                      ;matrix row 5
+    call ArrayToMatRow
+
+    ;fill in data for row 6
+    pop hl                      ;HL <- initial data address
+    push hl                     ;save HL for later
+    ld bc,_result_offset_LCV_index
+    add hl,bc
+    ld b,h
+    ld c,l                      ;BC <- array address
+    ld e,6                      ;array length
+    ld a,0                      ;databyte array
+    ld hl,output_matrix_name
+    ld d,6                      ;matrix row 6
     call ArrayToMatRow
 
     ;return

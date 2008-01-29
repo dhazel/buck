@@ -63,10 +63,11 @@ BC_start:
     jp BCStart
 
 ;
-; BC_millcompare_calculate -- the millcompare calculation mode block
+; BC_millcompare_calculate -- the millcompare calculation-mode block
 ;   NOTE: these comments are here for compliance with the dependency parser
 ;
 BC_millcompare_calculate:
+#ifndef DEBUG
     ;save current_mill settings (for reload when done)
     ld a,(currentmill_number)
     push af
@@ -80,8 +81,12 @@ BC_millcompare_calculate:
     call ResetVolatileData
     call ClearErrors        ;clear all error handler logs
     call BuckInput          ;get user inputs and load variables
-    call Buck
+    call Handoff_BCK23 
     
+    ;re-calculate results without the price factor
+    ld ix,firstchoice_result_vars
+    call Bcalculate
+
     ;save mill1 results
     ld hl,firstchoice_result_vars
     ld de,mill1_result_vars
@@ -95,8 +100,12 @@ BC_millcompare_calculate:
     
     ;run buck algorithm
     call ResetVolatileData
-    call Buck
+    call Handoff_BCK23 
         
+    ;re-calculate results without the price factor
+    ld ix,firstchoice_result_vars
+    call Bcalculate
+
     ;save mill2 results
     ld hl,firstchoice_result_vars
     ld de,mill2_result_vars
@@ -110,8 +119,12 @@ BC_millcompare_calculate:
     
     ;run buck algorithm
     call ResetVolatileData
-    call Buck
+    call Handoff_BCK23 
     
+    ;re-calculate results without the price factor
+    ld ix,firstchoice_result_vars
+    call Bcalculate
+
     ;reload current_mill settings and data
     pop af
     ld (mill_number),a
@@ -122,13 +135,15 @@ BC_millcompare_calculate:
     ld (FinDisplay_data_pointer),hl
     jp FinMenu
     
+#endif
     ret
 
 ;
-; BC_usercompare_calculate -- the usercompare calculation mode block
+; BC_usercompare_calculate -- the usercompare calculation-mode block
 ;   NOTE: these comments are here for compliance with the dependency parser
 ;
 BC_usercompare_calculate:
+#ifndef DEBUG
     ;clean the data banks
     call ResetVolatileData  ;reset all volatile data
     call ClearErrors    ;clear all error handler logs
@@ -146,7 +161,7 @@ BC_usercompare_calculate:
     ld hl,user_guess_mill_number
     ld (hl),a
     
-    ;loop extract user buck lengths and diameters, calculate price for each one
+    ;loop extract user buck lengths
     ld b,0
 BC_usercompare_calculate_loop:
     inc b
@@ -174,63 +189,6 @@ BC_usercompare_calculate_loop:
     call ArrayAccess_ne
     dec hl              ;we want to index from the zero'th element
     ld (hl),c
-    push hl             ;for use in the volume routine
-
-    ;extract diameter
-    ld hl,log_dia
-    call ArrayAccess_ne
-    ld d,(hl)           ;for use in the volume routine
-    
-    ;check diameter against log criteria
-    push bc
-    push de
-    ld hl,LCV           ;HL <- address of LCV
-    ld a,(LCV_size)
-    ld b,a              ;B <- LCV_size
-    ld a,c              ;A <- length
-    call FindByte       ;find the corresponding length element in the LCV
-    jp z,BC_usercompare_calculate_loop_skip ;if not found
-    ld b,d              ;B <- index
-    pop de
-    push de
-    call CriteriaPassFail ;do we pass the criteria test??
-    jp nc,BC_usercompare_calculate_loop_overskip
-BC_usercompare_calculate_loop_skip:
-    pop de  ;get this off the stack!
-    pop bc  ;load B properly
-    pop hl  ;get this off the stack!
-    jp BC_usercompare_calculate_loop_continuecheck
-BC_usercompare_calculate_loop_overskip:
-    pop de
-    pop bc
-
-    ;calculate volume
-    call Volume
-    pop bc              ;B iterator, and length - trim (C)
-    inc c               ;add trim back into length
-
-    ;save volume
-    ld hl,user_v        ;load user_v with volume
-    call ArryAccessW_ne
-    dec hl              ;we want to start with the first element
-    ld (hl),e
-    dec hl
-    ld (hl),d
-
-    pop de              ;pointer to length (un-needed remnant from Volume)
-
-    push bc             ;save these for later
-    ;calculate price
-    call Price2standalone
-    pop bc              ;get these back
-
-    ;save price
-    ld hl,user_p        ;load user_p with price
-    call ArryAccessW_ne
-    dec hl              ;we want to start with the first element
-    ld (hl),e
-    dec hl
-    ld (hl),d
 
     ;continue loop??
 BC_usercompare_calculate_loop_continuecheck:
@@ -238,49 +196,61 @@ BC_usercompare_calculate_loop_continuecheck:
     cp _log_entries
     jp c,BC_usercompare_calculate_loop
 BC_usercompare_calculate_loop_end:
-    ;sum price and volume arrays
-    ld ix,user_p
-    call SumWrdArray
-    ld (user_sum_p),hl
-    ld hl,user_p
-    ld ix,user_v
-    call SumWrdArray_rel
-    ld (user_sum_v),hl
+    ;extract diameters
+    ld hl,log_dia + 1
+    ld de,user_td
+    ld b,_log_entries
+    ldir                ;copy log_dia into user_td, remitting the butt diameter
+
+    ;calculate user values
+    ld ix,user_guess_result_vars
+    call Bcalculate
 
     ;copy user_guess results into Buck's data
-;    ld hl,user_guess_result_vars
-;    ld de,firstchoice_result_vars
-;    ld bc,firstchoice_mill_number - firstchoice_result_vars
-;    ldir ;NOTE: could also write secondchoice (speedup is marginal either way)
+    ld hl,user_guess_result_vars
+    ld de,firstchoice_result_vars
+    ld bc,firstchoice_mill_number - firstchoice_result_vars
+    ldir ;NOTE: could also write secondchoice (speedup is marginal either way)
 
     ;run Buck
-    call Buck           ;calculate optimal buck lengths
+    call Handoff_BCK23  ;calculate optimal buck lengths
+
+    ;re-calculate the result values without the price-factor
+    ld ix,firstchoice_result_vars
+    call Bcalculate
+    ld ix,secondchoice_result_vars
+    call Bcalculate
 
     ;display output
     ld hl,FinDisplay3_usercompare_display
     ld (FinDisplay_data_pointer),hl
     jp FinMenu
 
-    ;call TestPrints            
-
+#endif
     ret                 ;just in case!
 
 ;
-; BC_basic_calculate -- the basic calculation mode block
+; BC_basic_calculate -- the basic calculation-mode block
 ;   NOTE: these comments are here for compliance with the dependency parser
 ;
 BC_basic_calculate:
     call ResetVolatileData  ;reset all volatile data
     call ClearErrors    ;clear all error handler logs
     call BuckInput      ;get user inputs and load variables
-    call Buck           ;calculate optimal buck lengths
+    call Handoff_BCK23  ;calculate optimal buck lengths
 
+    ;re-calculate the result values without the price-factor
+    ld ix,firstchoice_result_vars
+    call Bcalculate
+    ld ix,secondchoice_result_vars
+    call Bcalculate
+
+    ;display results
     ld hl,FinDisplay3_basic_display
     ld (FinDisplay_data_pointer),hl
     jp FinMenu
     
-    ;call TestPrints            
-
+    ;return
     ret
 
 ;===============================================================================
@@ -302,8 +272,8 @@ BC_basic_calculate:
 
 #ifdef DEBUG
     .warning Assembling for debug mode!
-#else
-    .message Bucking Calculator, Copyright © 2007 by David Hazel
+;#else
+;    .message Bucking Calculator, Copyright © 2007 by David Hazel
 #endif
 
 
@@ -313,7 +283,7 @@ address_after_prog: $   ;a "$" means "*this* address in memory" ...the address
                 ;in memory with no instructions or data after this, this is a
                 ;reference to the byte after your program
                 
-;#if address_after_prog > $FA70
+;#if $ > $FA70
 ;    .error Program is too big!
 ;#endif
 

@@ -1,0 +1,55 @@
+#!/bin/awk
+
+BEGIN {
+    print " "
+}
+
+{   
+    # check program size
+    if($1 ~ /address_after_prog/){
+        if($3 > "$fa70"){
+            print " "
+            print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            print "  ERROR: "filename" IS TOO BIG"
+            print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            print " "
+        }else{
+            print " Good...  "filename" is within size limits"
+            print "     *** check passed ***"
+            label_exists = 1
+        }
+    }
+
+    # track filename changes
+    if(file != FILENAME){
+        if(file){
+            if(! label_exists){
+                print " "
+                print filename".asm is missing the \"address_after_prog: $\" label"
+                print " Place the label at the end of the file"
+                print "     *** check skipped ***"
+                print " "
+            }
+        }
+        label_exists = 0
+        file = FILENAME
+        split(file,file_fields,"\.")
+        filename = file_fields[1]
+    }
+
+}
+
+END {
+
+    if(file){
+        split(file,file_fields,"\.")
+        filename = file_fields[1]
+        if(! label_exists){
+            print " "
+            print filename".asm is missing the \"address_after_prog: $\" label"
+            print " Place the label at the end of the file"
+            print "     *** check skipped ***"
+            print " "
+        }
+    }
+}

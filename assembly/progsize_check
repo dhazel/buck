@@ -1,0 +1,5 @@
+#!/bin/bash
+
+awk -f parse/awk.check.codesize BC60.inc BCK23.inc BCLP2.inc BCStup.inc
+
+exit 0

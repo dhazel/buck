@@ -6,16 +6,14 @@
 ;  NOTE: This is a special error handler routine designed
 ;           specifically for the Volume routine
 ;  total: 37b
-;  tested: yes
+;  tested: no
 ;============================================================
-    .db 0  ;count occurences
-    .db 40 ;greatest error margin (maximum length is 40 feet)
 ErrMaxLgth:
     ld ix,err_occured
     ld (ix),1
-    ld ix,ErrMaxLgth-2
+    ld ix,err_MaxLgth_occured
     inc (ix)
-    inc ix
+    ld ix,err_MaxLgth_bound
     cp (ix) ;keep track of greatest error margin
     jp c,ErrMaxLgth_overerr
     ld (ix),a

@@ -169,25 +169,28 @@ x       - make sure that SwitchMill updates only what it needs to
 x           - add multiple modes to StatDataInit
 x               - init matrices (A == 0)
 x               - init mill names (A == 1)
-\               - check matrix initialization (A == 2)?
-\               - check mill name initialization (A == 3)?
+/               - check matrix initialization (A == 2)?
+/               - check mill name initialization (A == 3)?
 x           - double check that names are updated!
 x   - matrix variables stored in TIOS
 x       - one for each mill
 x           - "bcmill1", "bcmill2", "bcmill3"
-x       - .-----------------------------------------------------------------.
-x         |shippable lengths                                                |
-x         |-----------------------------------------------------------------|
-x         |tally for each length                                            |
-x         |-----------------------------------------------------------------|
-x         |total volume for each length                                     |
-x         |-----------------------------------------------------------------|
-x         |total value for each length                                      |
-x         |-----------------------------------------------------------------|
-x         |total top diameter for each length                               |
-x         |---------------.------.--------.-------.--------.-------.--------|
-x         |total... trees | logs | volume | value | length | top d | butt d |
-x         *---------------^------^--------^-------^--------^-------^--------*
+x       - layout:
+x .----------------------------------------------------------------------------.
+x |shippable lengths                                                           |
+x |----------------------------------------------------------------------------|
+x |tally for each length                                                       |
+x |----------------------------------------------------------------------------|
+x |total volume for each length                                                |
+x |----------------------------------------------------------------------------|
+x |total value for each length                                                 |
+x |----------------------------------------------------------------------------|
+x |total top diameter for each length                                          |
+x |----------------------------------------------------------------------------|
+x |volume constraint indicator for each length                                 |
+x |-------.------.--------.-------.--------.-------.--------..--------.--------|
+x | trees | logs | volume | value | length | top d | butt d || p-fact | v-perc |
+x *-------^------^--------^-------^--------^-------^--------^^--------^--------*
 x       - TIBASIC statistics processing program, "bcstpr"
 x           - figure out how (with what editor) this should be written
 x               - VTI program editor (annoying, but works)
@@ -225,6 +228,8 @@ x         |--------------------------------------------------|
 x         |prices array                                      |
 x         |--------------------------------------------------|
 x         |diameter array                                    |
+x         |--------------------------------------------------|
+x         |LCV index array                                   |
 x         *--------------------------------------------------*
 x             - state_status variable
 x                   - use 0 and 1 to designate stale or fresh data
@@ -381,8 +386,90 @@ x       -> speed increase is quite marginal, very small
 x       -> could also be done with second-choice 
 x debug statdata checking
 x design a straightforward way to maximize the length left in the woods
+x make debug mode automatically disable features for space considerations
+x have FinDisplay clear the menu before exporting data
+x figure out how to get the code smaller in BC60
+x   - split Buck23 out into its own program 
+x       - write second copyover routine for volatile data ("copyover_volatile")
+x           - add data labels for volatile data
+x       - rename program from "Buck23" to BCK23.asm
+x       - write handoff routine for BCK23
+x           - copyover both regular and volatile data
+x       - add BCK23 name to bc_data
+x       - add BCK23 check to Tamperchk
+x       - make Buck23 into its own program ->  BCK23
+x           - add includes
+x           - add Tamperchk to startup
+x           - add copyover to writeback volatile data
+x               - make sure that error tracking variables are included
+x                   - move error tracking variables into bc_data
+x                       - into the volatile_data section
+x                       - update ClearErrors
+x                       - update PrintErrors
+x                       - update the error handlers
+x           - add check to make sure that inputs have been written
+x               - write flag variable at end of BuckInput
+x                   - add variable to bc_data
+x                       - use the "length" variable
+x               - unset the flag variable before exiting
+x               - exit quietly if inputs haven't been written
+x       - change calls in BC
+x           - millcompare
+x           - guesscompare
+x           - basic
+x       - add it to the includes generator
 - prepare the Buck algorithm for upcoming enhancements
     - price skew number to be used in volume constraint framework
+x       - add row to bcmill* TIOS variables
+x       - add constraint criteria to bc_data 
+x       - add export of constraint criteria
+x       - add price factor to Price2
+x           - input from OP4
+x           -> OP2 is untouched by the _FPMULT routine
+x           - check that length is volume constrained before applying the factor
+x       - add import of price factor to Buck23
+x           - store price factor in OP4
+x           - determine location for the "p-factor" in the stat matrices
+x               - row 7, column 8
+x               - make sure p-factor is initialized to 1
+x                   - StatDataInit
+x       - export the logs' corresponding LCV locations
+x           - base this on the recalculation stage and FindInLCV
+x           - add a row to bcout
+x               - in bc_data
+x               - export the row in ExportResults
+x           - remove calls to LCVCompaction
+x               - StatDataInit
+x           - remove LCVcompact data fields from bc_data
+        - update the TIBASIC programs for the new stat matrix row
+x           - reference tallies down one row
+            - use the exported LCV locations to reference the matrix index
+x       - add volume-constraint-percentage field to bc_data
+x       - add export of percentage field to the stat matrices
+x           - row 7, column 9
+x       - make BC60 automatically re-caculate tree value (without the p-factor)
+x           - create a raw log input data field
+x               - have BuckInput copy the data into the user_guess_result_vars
+x           - make a calculation routine that uses the raw log input
+x               - "Bcalculate"
+x               - inputs: result_data_start
+x               - take code from BC60 usercompare-mode section
+x               - load an LCV index array (like "it") for exporting
+x                   - add the data space to bc_data
+x               - write a FindInLCV routine to find LCV elements (including
+x                   criteria) that match the inputs
+x               - rewrite Price2standalone
+x                   - no longer use a find routine
+x                       - take LCV index directly as input
+x                   - use a p-factor of 1 (nullifies the p-factor)
+x           - add Bcalculate to BC60
+x               - for each calculation mode
+x               - run Bcalculate after running Buck
+x       - check to make sure that millcompare mode loads p-factor correctly
+        - add edit capacity to CriteriaEditor
+            - write percentage field and identifier array to the stat matrices
+            - ask to re-initialize the price skew (p-factor set to 1)
+        - add criteria check to BCLP2 display 
 x   - switch copyblock choice function from (>=) to just (>)
 x       - simple cp command switch
 x       -> this will reverse the effective priority order and decrease the 
@@ -391,6 +478,14 @@ x       -> this will also enable specialized copyblock choice criteria like
 x           (percent better value) or similar
 x   - reverse LCV traversal
 x       - remove need for 255 termination
+- fix redo bug in TIBASIC programs
+    - acting as though it is redoing when it is really not
+- fix bug in Price2standalone
+    - gives false output unless using a proper find function
+- fix 11 - 25 - 5 interfor price bug
+    - user guess beats the calculator's result
+- add interrupt timer to halt execution if too much time passes
+- make it impossible to turn the calculator off while in a "handoff" program
 
 
 
@@ -399,7 +494,8 @@ x       - remove need for 255 termination
 - determine pricing to sell the calculator
 
 
-- add interrupt timer to halt execution if too much time passes
+- add the option to choose between tie-breaker methods
+    - priority lengths vs. length left in the woods
 - get rid of all LCV 255-termination-centric code
     - BCLP2
     - LCVCompaction ?
@@ -418,7 +514,7 @@ x           - obfuscation is heavy regarding how to access Input from assembler
         - check for maximum characters
 - check which routines could reference the program global constraints defines 
     and modify them to do so
-- make ResetVolatileData roll "it" over to 255's more elegantly
+- make ResetVolatileData set "it" more elegantly
 - reconsider adding log grade criteria
     - create input in user interface
     - create log_grade input data array
@@ -448,6 +544,9 @@ x           - obfuscation is heavy regarding how to access Input from assembler
 - update BuckLP2 to use the InputInt function
 - write volume percentage constraint framework
 - rewrite BuckInput to operate more like an editor
+    - use InputInt
+    - write data in a simple form for usercompare mode
+        - get rid of most of the usercompare mode code
 
 
 

@@ -2,7 +2,7 @@
 
 ./dependancy_generator
 
-awk -f parse/awk.generate.includes dependancies BC60.asm BCLP2.asm BCStup.asm
+awk -f parse/awk.generate.includes dependancies BC60.asm BCLP2.asm BCStup.asm BCK23.asm
 
 exit 0
 # test text

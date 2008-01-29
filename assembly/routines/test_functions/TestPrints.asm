@@ -8,7 +8,7 @@
 ;  output:  output printed to screen
 ;  affects: assume everything
 ;  total: 254b/1036t (excluding func calls, including ret)
-;  tested: yes
+;  tested: no
 ;============================================================
 TestPrints:
     call _newline
@@ -18,6 +18,7 @@ price_array_text:  .db "Prices:",0
 length_array_text: .db "Lengths:",0
 volume_array_text: .db "Volumes:",0
 diam_array_text:   .db "Diams:",0
+LCV_index_array_text:   .db "LCV:",0
 separator_text:    .db "------",0
 TestPrints_over_testprints_data:
 
@@ -61,6 +62,15 @@ TestPrints_over_testprints_data:
     call _newline
     call _getkey
     
+    ld hl,LCV_index_array_text
+    call _puts
+    call _newline
+    ld ix,LCV_index1
+    ld b,5
+    call PrintArray
+    call _newline
+    call _getkey
+    
     ld hl,price_array_text
     call _puts
     call _newline
@@ -96,6 +106,15 @@ TestPrints_over_testprints_data:
     call _puts
     call _newline
     ld ix,Lf2
+    ld b,5
+    call PrintArray
+    call _newline
+    call _getkey
+    
+    ld hl,LCV_index_array_text
+    call _puts
+    call _newline
+    ld ix,LCV_index2
     ld b,5
     call PrintArray
     call _newline

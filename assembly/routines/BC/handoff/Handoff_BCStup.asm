@@ -15,6 +15,7 @@ Handoff_BCStup_bigmessage_text: .db "The Setup module is    not present on      
 Handoff_BCStup_bigmessage: .dw Handoff_BCStup_bigmessage_text,okay_text,okay_text
 
 Handoff_BCStup:
+#ifndef DEBUG
     ;check for existance of BCStup
     ld hl,pname_BCSetup-1     ;copy anything before string name 
                                             ; for type byte
@@ -34,6 +35,7 @@ Handoff_BCStup:
     ;return
     ret
 Handoff_BCStup_nonexistant:
+#endif
     ;display big message, wait for keypress and return
     ld ix,Handoff_BCStup_bigmessage
     call bigmessage

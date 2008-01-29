@@ -32,17 +32,17 @@ PrintErrors:
     call _getkey
 
     ;print errors
-    ld a,(ErrMinDiam - 2)           ;if no error then skip displaying it
+    ld a,(err_MinDiam_occured)           ;if no error then skip displaying it
     cp 0
     jp z,PrintErrors_overMinDiam
     ld hl,errMinDiam_text
     call _puts
-    ld hl,ErrMinDiam-2
+    ld hl,err_MinDiam_occured
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
     call _dispAHL
-    ld hl,ErrMinDiam-1
+    ld hl,err_MinDiam_bound
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
@@ -51,17 +51,17 @@ PrintErrors:
     call _newline
 PrintErrors_overMinDiam:
     
-    ld a,(ErrMaxDiam - 2)
+    ld a,(err_MaxDiam_occured)
     cp 0
     jp z,PrintErrors_overErrMaxDiam
     ld hl,errMaxDiam_text
     call _puts
-    ld hl,ErrMaxDiam-2
+    ld hl,err_MaxDiam_occured
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
     call _dispAHL
-    ld hl,ErrMaxDiam-1
+    ld hl,err_MaxDiam_bound
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
@@ -70,17 +70,17 @@ PrintErrors_overMinDiam:
     call _newline
 PrintErrors_overErrMaxDiam:
 
-    ld a,(ErrMinLgth - 2)
+    ld a,(err_MinLgth_occured)
     cp 0
     jp z,PrintErrors_overErrMinLgth
     ld hl,errMinLgth_text
     call _puts
-    ld hl,ErrMinLgth-2
+    ld hl,err_MinLgth_occured
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
     call _dispAHL
-    ld hl,ErrMinLgth-1
+    ld hl,err_MinLgth_bound
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
@@ -89,17 +89,17 @@ PrintErrors_overErrMaxDiam:
     call _newline
 PrintErrors_overErrMinLgth:
 
-    ld a,(ErrMaxLgth - 2)
+    ld a,(err_MaxLgth_occured)
     cp 0
     jp z,PrintErrors_overErrMaxLgth
     ld hl,errMaxLgth_text
     call _puts
-    ld hl,ErrMaxLgth-2
+    ld hl,err_MaxLgth_occured
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
     call _dispAHL
-    ld hl,ErrMaxLgth-1
+    ld hl,err_MaxLgth_bound
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
@@ -108,12 +108,12 @@ PrintErrors_overErrMinLgth:
     call _newline
 PrintErrors_overErrMaxLgth:
 
-    ld a,(ErrReverseTaper - 1)
+    ld a,(err_ReverseTaper_occured)
     cp 0
     jp z,PrintErrors_overErrReverseTaper
     ld hl,errReverseTaper_text
     call _puts
-    ld hl,ErrReverseTaper-1
+    ld hl,err_ReverseTaper_occured
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
@@ -122,12 +122,12 @@ PrintErrors_overErrMaxLgth:
     call _newline
 PrintErrors_overErrReverseTaper:
 
-    ld a,(ErrIntpolatOverrun - 1)
+    ld a,(err_IntpolatOverrun_occured)
     cp 0
     jp z,PrintErrors_overErrIntpolatOverrun
     ld hl,errIntpolatOverrun_text
     call _puts
-    ld hl,ErrIntpolatOverrun-1
+    ld hl,err_IntpolatOverrun_occured
     ld l,(hl)
     xor a               ;A = 0
     ld h,0              ;H = 0
