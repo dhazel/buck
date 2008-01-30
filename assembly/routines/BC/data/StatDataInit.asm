@@ -85,14 +85,6 @@ StatDataInit_initmill:  ;callable section ;initialize the mill matrix
         pop hl                      ;mill stat data matrix name
         push hl
         call MatrixZero             ;fill with zeros
-        ld a,(vol_constraint_percent);A <- volume constraint percentage
-        call _setXXop1              ;OP1 <- volume constraint percentage
-        pop hl                      ;mill stat data matrix name
-        push hl
-        ld d,_statdata_rows         ;last row
-        ld e,9                      ;column 9
-        ld a,1                      ;write
-        call MatrixAccess
         call _op1set1               ;OP1 <- reset price-skew-factor
         pop hl                      ;mill stat data matrix name
         ld d,_statdata_rows         ;last row
@@ -153,13 +145,17 @@ StatDataInit_currentmillcheck_end:
     ld a,0
     ld (errStatDataMissing_displayed),a
     ;return
+    ld a,0
+    ld (errStatDataMissing_displayed),a
     call _runindicoff
     ret
 StatDataInit_nonameinit:
-    ;zero out current mill matrix
+    ;generic mill matrix basic initialization
     pop hl              ;mill matrix name
     push hl
-    call MatrixZero
+    ld a,1
+    ld (errStatDataMissing_displayed),a
+    call StatDataInit_initmill
 
     ;fill current mill matrix first row with LCV elements
     pop hl                  ;mill matrix name
@@ -172,15 +168,29 @@ StatDataInit_nonameinit:
     ld a,0                  ;databyte array
     call ArrayToMatRow  
 
+    ;load in the mill's volume constraint percentage value
+    ld a,(vol_constraint_percent);A <- volume constraint percentage
+    call _setXXop1              ;OP1 <- volume constraint percentage
+    pop hl                      ;mill stat data matrix name
+    push hl
+    ld d,_statdata_rows         ;last row
+    ld e,9                      ;column 9
+    ld a,1                      ;write
+    call MatrixAccess
+
     ;fill the second-to-last row with the volume constraint identifiers
     pop hl                  ;mill matrix name
     ld bc,vol_constrain     ;data array
     ld d,6                  ;row 6
-    ld e,20                 ;20 elements long
+    ld a,(LCV_size)         ;length of data array
+    inc a                   ;   index from 1
+    ld e,a
     ld a,0                  ;databyte array
     call ArrayToMatRow
 
     ;return
+    ld a,0
+    ld (errStatDataMissing_displayed),a
     call _runindicoff
     ret
 

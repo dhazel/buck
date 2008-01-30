@@ -19,6 +19,19 @@
 ;  tested: no 
 ;===============================================================================
 Bcalculate:
+    ;preload the LCV_index array with 255's
+    push ix
+    pop hl              ;HL <- start address of "result" datastructure
+    ld b,_result_offset_LCV_index; LCV_index array offset
+    call ArrayAccess_ne ;HL <- LCV_index array address
+    ld b,_log_entries + 1
+Bcalculate_preloadloop:
+    ld (hl),255
+    inc hl
+    dec b
+    jp nz,Bcalculate_preloadloop
+
+    ;enter the calculation loop
     ld b,0
 Bcalculate_loop:
 

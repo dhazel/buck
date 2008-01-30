@@ -10,7 +10,7 @@
 ;           value is copied into 'Li'
 ;  affects: assume everthing
 ;  total: 33b
-;  tested: yes
+;  tested: no
 ;============================================================
 ResetVolatileData:
     ld b,data_volatile_end - data_volatile_start
@@ -20,19 +20,15 @@ ResetVolatileData:
     dec (hl)                    ;roll min_length over to 255
     ld a,(length)               ;copy length value into 'Li'
     ld (Li),a
-    ld hl,it            ;roll all "it" values over to 255
+    ld hl,it            ;fill all "it" values with LCV_size
     ld a,(LCV_size)
-    ld (hl),a           ;this could be better, but I am in a hurry
+    ld b,_log_entries + 1
+ResetVolatileData_itloop:
+    ld (hl),a           
     inc hl
-    ld (hl),a
-    inc hl
-    ld (hl),a
-    inc hl
-    ld (hl),a
-    inc hl
-    ld (hl),a
-    inc hl
-    ld (hl),a
+    dec b
+    jp nz,ResetVolatileData_itloop
 
+    ;return
     ret
 

@@ -116,7 +116,9 @@ FinMenu_stat_choice3:
     jp FinMenu_stat_choice
 FinMenu_stat_choice:
     ;clear the menu
+    push af
     call clearmenu
+    pop af
 
     ;export the results
     call ExportResults

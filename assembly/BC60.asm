@@ -199,7 +199,8 @@ BC_usercompare_calculate_loop_end:
     ;extract diameters
     ld hl,log_dia + 1
     ld de,user_td
-    ld b,_log_entries
+    ld b,0
+    ld c,_log_entries
     ldir                ;copy log_dia into user_td, remitting the butt diameter
 
     ;calculate user values

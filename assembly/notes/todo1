@@ -435,15 +435,16 @@ x               - make sure p-factor is initialized to 1
 x                   - StatDataInit
 x       - export the logs' corresponding LCV locations
 x           - base this on the recalculation stage and FindInLCV
+x           - if not found in LCV, then fill with 255
 x           - add a row to bcout
 x               - in bc_data
 x               - export the row in ExportResults
 x           - remove calls to LCVCompaction
 x               - StatDataInit
 x           - remove LCVcompact data fields from bc_data
-        - update the TIBASIC programs for the new stat matrix row
+x       - update the TIBASIC programs for the new stat matrix row
 x           - reference tallies down one row
-            - use the exported LCV locations to reference the matrix index
+x           - use the exported LCV locations to reference the matrix index
 x       - add volume-constraint-percentage field to bc_data
 x       - add export of percentage field to the stat matrices
 x           - row 7, column 9

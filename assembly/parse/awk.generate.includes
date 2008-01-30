@@ -37,10 +37,8 @@ BEGIN {
 }
 #-------------------------------------------------------------------------------
 END {
-    print " -- "
     if(!pathtable[1,1]){
         print "FAILURE: no \"dependancies\" file included with input... exiting"
-        print " -- "
         exit 1
     }
     extension = ".inc"
@@ -88,7 +86,7 @@ END {
                 i = i + 1
             }
             if(! deptable[i,1]){
-                print " WARNING: missing path for \""routinearray[routine]"\""
+                print "  Warning: missing path for \""routinearray[routine]"\""
                 print "     to fix, add a formatted note to whichever file it \
 belongs."
             }
@@ -155,7 +153,4 @@ belongs."
             }
         }
     }
-    print " -- "
-    print "done"
-    print " -- "
 }

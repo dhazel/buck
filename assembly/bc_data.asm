@@ -71,6 +71,7 @@ prices_mill1: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 LCV_mill1: .db 1,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255
 minmax_td_mill1: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
 vol_constrain_mill1: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;volume criteria
+vol_constraint_percent_mill1: .db 0 ;minimum production for constrained logs
 mill1_LCV_size: .db 0 ;number of elements (starting from 0) in the LCV
 mill2_name: .db "rsg     ",0  
 mill2_number: .db 1
@@ -79,6 +80,7 @@ prices_mill2: .dw 300,300,475,475,475,475,475,475,475,475,575,575,625,625,625,0,
 LCV_mill2: .db 15,13,31,29,27,25,23,21,19,17,35,33,41,39,37,255,0,0,0,0,255
 minmax_td_mill2: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
 vol_constrain_mill2: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;volume criteria
+vol_constraint_percent_mill2: .db 0 ;minimum production for constrained logs
 mill2_LCV_size: .db 14 ;number of elements (starting from 0) in the LCV
 mill3_name: .db "freres  ",0 
 mill3_number: .db 2
@@ -87,6 +89,7 @@ prices_mill3: .dw 580,580,580,580,580,580,580,580,580,0,0,0,0,0,0,0,0,0,0,0
 LCV_mill3: .db 12,13,23,31,39,33,18,27,35,255,0,0,0,0,0,0,0,0,0,0,255
 minmax_td_mill3: .dw 8,8,8,8,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
 vol_constrain_mill3: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;volume criteria
+vol_constraint_percent_mill3: .db 0 ;minimum production for constrained logs
 mill3_LCV_size: .db 8 ;number of elements (starting from 0) in the LCV
 mill3_end:  ;marks the end of mill3 data
 ;/multiple mills----------------------------------------------
@@ -113,6 +116,7 @@ minmax_td: .dw 8,8,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max top diameter
                                                        ; second byte is the max
 vol_constrain: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;volume constraint
                                                            ; criteria. (0/1)
+vol_constraint_percent: .db 0 ;percent minimum production for constrained logs
 LCV_size: .db 6 ;number of elements (starting from 0) in the LCV
 data_LP_end:
 ;/mill data--------------------------------------------------------------------
@@ -121,7 +125,6 @@ statistics: .db 0  ;[on/off] [adds/removes complexity from the GUI]
 mill_number: .db 0 ;mill to switch to when SwitchMill routine is run
 calculation_mode: .db 0 ;0 = basic calculate, 1 = user compare, 2 = mill compare
 trucking_cost: .db 0  ;[TODO]
-vol_constraint_percent: .db 0 ;percent minimum production for constrained logs
 
 max_length: .db 151 ;[TODO: this should be calculated based on number of LCV 
                     ;           elements and length of tree]

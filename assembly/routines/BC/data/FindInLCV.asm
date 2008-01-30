@@ -67,7 +67,9 @@ FindInLCV_found:
     ;/ no need, B is already loaded
 
     ;reset zero flag
+    push bc
     call ResetZeroFlag
+    pop bc
 
     ;return
     ret

@@ -320,7 +320,7 @@ routines/buck/algorithm/CriteriaPassFail.asm
    CriteriaPassFail : 
       ArryAccessW_ne 
 routines/buck/data/ResetVolatileData.asm 
-   ResetVolatileData : 
+   ResetVolatileData :     >>> untested <<< 
 routines/buck/error_handlers/ClearErrors.asm 
    ClearErrors :     >>> untested <<< 
 routines/buck/error_handlers/ErrDataUnused.asm 
@@ -363,9 +363,9 @@ routines/buck/error_handlers/ErrTooShort.asm
       VarDump 
 routines/buck/math/Bcalculate.asm 
    Bcalculate :     >>> untested <<< 
+      ArrayAccess_ne 
       Err_s_Overrun 
       FindInLCV 
-      ArrayAccess_ne 
       Volume 
       ArryAccessW 
       Price2standalone 
