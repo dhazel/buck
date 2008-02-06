@@ -15,8 +15,8 @@
 ;                   data to be used for calculation)
 ;  output:  the rest of the datastructure (supplied at input) is populated
 ;  affects: assume everything
-;  total: b (excluding func calls, including ret)
-;  tested: no 
+;  total: 186b (excluding func calls, including ret)
+;  tested: yes
 ;===============================================================================
 Bcalculate:
     ;preload the LCV_index array with 255's
@@ -134,7 +134,7 @@ Bcalculate_loop_end:
     call SumWrdArray    ;HL <- sum of price array elements
     pop ix              ;IX <- start address of "result" datastructure
 
-    ;load sum data      (DAVID: check byte order of these word-size loads!)
+    ;load sum data      (note byte order of these word-size loads!)
     ld (ix + _result_offset_sum_p),l
     ld (ix + _result_offset_sum_p + 1),h
 
@@ -155,7 +155,7 @@ Bcalculate_loop_end:
     call SumWrdArray_rel ;HL <- sum of relevant volume array elements
     pop ix              ;IX <- start address of "result" datastructure
 
-    ;load sum data      (DAVID: check byte order of these word-size loads!)
+    ;load sum data      (note byte order of these word-size loads!)
     ld (ix + _result_offset_sum_v),l
     ld (ix + _result_offset_sum_v + 1),h
 

@@ -7,12 +7,12 @@ BEGIN {
 {
     # read in the dependancy file and parse it into a simple database
     if(FILENAME ~ /^dependancies$/){
-        if(/\./){
+        if((/\./) && !(/^- /)){
             # table 1: the file path data
             filenumber = filenumber + 1
             fileroutinenumber = 1
             pathtable[filenumber,1] = $1
-        }else if(/:/){
+        }else if((/:/) && !(/^- /)){
             fileroutinenumber = fileroutinenumber + 1 
             pathtable[filenumber,fileroutinenumber] = $1
 
@@ -20,9 +20,26 @@ BEGIN {
             routinenumber = routinenumber + 1
             depnumber = 1
             deptable[routinenumber,1] = $1
-        }else if(/[a-zA-Z0-9]/){
+            depnumber = 2
+                #concatenate in the routine state indicators
+            if(/\*\*\* unfinished \*\*\*/){
+                deptable[routinenumber,2] = deptable[routinenumber,2] "\*"
+            }
+            if(/!!! untested !!!/){
+                deptable[routinenumber,2] = deptable[routinenumber,2] "!"
+            }
+            if(/>>> uncounted <<</){
+                deptable[routinenumber,2] = deptable[routinenumber,2] ">"
+            }
+        }else if((/[a-zA-Z0-9]/) && !(/^- /)){
             depnumber = depnumber + 1
             deptable[routinenumber,depnumber] = $1
+        }else if(/^- /){
+            if(note_filename != pathtable[filenumber,1]){
+                note_filename = pathtable[filenumber,1]
+                print pathtable[filenumber,1]
+            }
+            print
         }
     }
 
@@ -42,6 +59,11 @@ END {
         exit 1
     }
     extension = ".inc"
+
+    # write start notice 
+    print " "
+    print "GENERATING INCLUDE FILES..."
+    print " "
 
     # generate the include files
     file = 1
@@ -64,6 +86,7 @@ END {
             i = i + 1      
         }
 
+        print " ---------------------------------------"
         print filearray[file] extension
 
         # generate the file's routine array (the routines in the file)
@@ -85,10 +108,43 @@ END {
                                                             (deptable[i,1])){
                 i = i + 1
             }
+
+            # error checks
             if(! deptable[i,1]){
                 print "  Warning: missing path for \""routinearray[routine]"\""
-                print "     to fix, add a formatted note to whichever file it \
-belongs."
+                print "     To fix, add a formatted note to whichever file it belongs."
+            }
+            if(deptable[i,2] ~ "\*"){
+                print "* DANGER: "filearray[file]" depends on an unfinished routine: "deptable[i,1]
+                print "     Please finish the routine before running "filearray[file]
+            }
+            if(deptable[i,2] ~ "!"){ # track routines in testing
+                # check for repeats
+                copy = 1
+                element = 1
+                while((array_of_tests[element]) && (copy == 1)){
+                    if(deptable[i,1] ~ "^"array_of_tests[element]"$"){
+                        copy = 0
+                    }
+                    element = element + 1
+                }
+                if(copy){
+                    array_of_tests[element] = deptable[i,1]
+                }
+            }
+            if(deptable[i,2] ~ ">"){ # track uncounted routines
+                # check for repeats
+                copy = 1
+                element = 1
+                while((array_of_uncounted[element]) && (copy == 1)){
+                    if(deptable[i,1] ~ "^"array_of_uncounted[element]"$"){
+                        copy = 0
+                    }
+                    element = element + 1
+                }
+                if(copy){
+                    array_of_uncounted[element] = deptable[i,1]
+                }
             }
 
             # copy dependancies to the end of the routinearray
@@ -96,6 +152,9 @@ belongs."
             col = 1
             while(deptable[row,col]){
                 col = col + 1
+                if(col == 2){  # step over the indicator column
+                    col = 3
+                }
 
                 # check for repeats (do not copy them)
                 copy = 1
@@ -152,5 +211,26 @@ belongs."
                 print "#include "deppatharray[element]  > includefile
             }
         }
+    }
+
+    # print general notices after we have finished
+    print " ---------------------------------------"
+    print " "
+    print "Testing:"
+    ORS = " "
+    print "     " 
+    element = 1
+    for(element in array_of_tests){
+        print array_of_tests[element]"," 
+    }
+    ORS = "\n"
+    print " "
+    print " "
+    print "Uncounted:"
+    ORS = " "
+    print "     " 
+    element = 1
+    for(element in array_of_uncounted){
+        print array_of_uncounted[element]"," 
     }
 }

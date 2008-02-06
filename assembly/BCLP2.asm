@@ -52,8 +52,8 @@ LengthPrice:
 ;  input: user keypress input
 ;  output: variables -- LCV, prices
 ;  affects: assume everything 
-;  total: 2094b
-;  tested: no
+;  total: 2335b
+;  tested: yes
 ;============================================================
     jp BCLP2 ;just in case!
 BCLP2_headwrapper_text: .db "---[             ]---",0
@@ -88,8 +88,6 @@ BCLP2_editing_message: .db "                    EDITING",0
 BCLP2_repeatentry_message: .db "No   Duplicate   Lengths",0
 BCLP2_pleaseinputatleastonevalue_bigmessage_text: .db "Please input at         least one value",0
 BCLP2_pleaseinputatleastonevalue_bigmessage: .dw BCLP2_pleaseinputatleastonevalue_bigmessage_text,okay_text,okay_text
-BCLP2_save_bigmessage_text: .db "Save Now?",0
-BCLP2_save_bigmessage: .dw BCLP2_save_bigmessage_text,no_text,save_text
 BCLP2_wipe_bigmessage_text: .db "This will clear all lengths and prices",0
 BCLP2_wipe_bigmessage: .dw BCLP2_wipe_bigmessage_text,cancel_text,okay_text
 BCLP2_delete_bigmessage_text: .db "Delete this            length/price pair?",0
@@ -103,7 +101,6 @@ BCLP2_screen_location: .db 0      ;track screen location
 BCLP2_selection_location: .db 0,1 ;track selection location
 BCLP2_menu_location: .db 0        ;track the switchable menu
 BCLP2_editing: .db 0              ;track whether or not we are editing
-BCLP2_lengthschange: .db 0        ;track whether a length has changed
 
 
 BCLP2_drawscreen: ;draws the screen
@@ -266,6 +263,7 @@ BCLP2_drawscreen_overtexthighlight1:
         ld a,2                  ;set cursor column
     ld (_curCol),a
     ld ix,LCV                   ;print LCV element
+    ld a,1                      ;element print mode
     call PrintArrayElm_drawscreen
     res textinverse,(iy+textflags)  ;reset highlighting
 
@@ -273,8 +271,13 @@ BCLP2_drawscreen_overtexthighlight1:
     call _putc
 
     ;check for criteria, mark if so
+    ld hl,vol_constrain
+    ld b,c                      ;B <- array index
+    call ArrayAccess_ne
+    ld a,(hl)
+    cp 1
+    jp z,BCLP2_drawscreen_criteria
     ld hl,minmax_td
-    ld b,c
     call ArryAccessW_ne
     ld b,0
     ld a,0
@@ -289,6 +292,7 @@ BCLP2_drawscreen_overcriteria1:
 BCLP2_drawscreen_overcriteria2:
     cp b
     jp z,BCLP2_drawscreen_overcriteria
+BCLP2_drawscreen_criteria:
         ld a,8                  ;the letter "c" (short for criteria)
     ld (_curCol),a
     ld a,Lc
@@ -380,7 +384,17 @@ BCLP2_delete_arraymiddle:
     push bc
     call ByteLShift             ;transfer (shorten the array)
 
-    ;load the addresses for starting the criteria transfer
+    ;load the addresses for starting the volume constraint transfer
+    ld a,(BCLP2_selection_location)
+    ld b,a
+    ld hl,vol_constrain
+    call ArrayAccess_ne
+    
+    pop bc                      ;B == # elements between selection and array end
+    push bc
+    call ByteLShift             ;transfer (shorten the array)
+
+    ;load the addresses for starting the top diameter criteria transfer
     ld a,(BCLP2_selection_location)
     ld b,a
     ld hl,minmax_td                   
@@ -495,7 +509,20 @@ BCLP2_insert_arraymiddle_routine_normal:
     push bc
     call BCLP2_insert_loop    ;transfer (lengthen the array)
 
-    ;load the addresses for starting the criteria transfer
+    ;load the addresses for starting the volume constraint transfer
+    ld a,(LCV_size)
+    ld b,a
+    ld hl,vol_constrain                   
+    call ArrayAccess_ne
+    ld d,h
+    ld e,l
+    inc de
+
+    pop bc
+    push bc
+    call BCLP2_insert_loop    ;transfer (lengthen the array)
+
+    ;load the addresses for starting the top diameter criteria transfer
     ld a,(LCV_size)
     ld b,a
     ld hl,minmax_td
@@ -656,12 +683,6 @@ BCLP2_call_delete:
     
     jp BCLP2              ;return to main window
 BCLP2_call_insert:
-    ;ld ix,BCLP2_insert_bigmessage
-    ;call bigmessage
-    ;call _getkey
-    ;cp kF4
-    ;jp nz,BCLP2            ;return to main window
-
     call BCLP2_insert     ;insert new length/price pair
 
     jp BCLP2              ;return to main window
@@ -984,28 +1005,6 @@ BCLP2_enter_length:            ;'Enter' at Length
     ld b,a
     ld hl,LCV
     call ArrayAccess_ne
-    
-;    ;check for duplicate entry, if found don't advance
-;    ld a,(LCV_size)
-;    ld b,a           ;load B with LCV_size (to check whole array)
-;    ld a,(hl)        ;load current entry into A
-;    inc a            ;(previous entries have trim added)
-;    ;inc hl          ;(can check current entry -- it will not match)
-;    inc b            ;iterator must zero consistant with a zero'th element match
-;    ld c,b           ;iterator used by cpdr is two byte (BC)
-;    ld b,0           ;   reload iterator accordingly
-;    ld hl,LCV        ;array to check
-;    cpir             ;repeat A-(HL),HL=HL-1,BC=BC-1 until A=(HL) or BC=0
-;    dec hl           ;  (will have stepped past the match)
-;    cp (hl)          ;was it A=(HL)?
-;                     ;no, advance 
-;    jp nz,BCLP2_enter_length_wrapup
-;    
-;    ;duplicate found, print error message and re-enter editor
-;    ld hl,BCLP2_repeatentry_message
-;    call menumessage   
-;    
-;    jp BCLP2_clear 
 BCLP2_enter_length_wrapup:
     ld a,(BCLP2_selection_location)   
     ld b,a
@@ -1015,7 +1014,7 @@ BCLP2_enter_length_wrapup:
     ;inc (hl)                    ;add trim to entered length
 
     ;signal that a length has changed
-    ld hl,BCLP2_lengthschange
+    ld hl,lengthschange
     ld (hl),1
     
     jp BCLP2
@@ -1024,22 +1023,23 @@ BCLP2_clear:
     call BCLP2_clearelement
     jp BCLP2_edit_getkey
 BCLP2_clearcriteria:
-    call BCLP2_clearmin_td
-    call BCLP2_clearmax_td
+    call BCLP2_clearminmax_td
+    call BCLP2_clearvolconstraint
     ret                         ;return to execution
-BCLP2_clearmin_td:
+BCLP2_clearminmax_td:
     ld a,(BCLP2_selection_location)
     ld b,a
     ld hl,minmax_td
     call ArryAccessW_ne
     ld (hl),0
+    inc hl
+    ld (hl),0
     ret                         ;return to execution
-BCLP2_clearmax_td:
+BCLP2_clearvolconstraint:
     ld a,(BCLP2_selection_location)
     ld b,a
-    ld hl,minmax_td
-    call ArryAccessW_ne
-    inc hl
+    ld hl,vol_constrain
+    call ArrayAccess_ne
     ld (hl),0
     ret                         ;return to execution
 BCLP2_clearelement:
@@ -1116,7 +1116,7 @@ BCLP2_done_finish:
     inc b
     call ArrayAccess_ne
     ld (hl),255
-    
+
     ;save updated data
     call save_data   
     
@@ -1125,7 +1125,7 @@ BCLP2_done_finish:
     call _clrScrn
 
     ;check and prompt for stats reset
-    ld a,(BCLP2_lengthschange)
+    ld a,(lengthschange)
     cp 0
     ret z                       ;return if no length changes
     ld ix,BCLP2_statskew_bigmessage
@@ -1147,15 +1147,23 @@ BCLP2_done_finish_statsreset_continue:
     jp z,BCLP2_done_finish_end
     jp BCLP2_done_finish_statsreset_continue
 BCLP2_done_finish_statsreset_reset:
-    call workingmessage
-    ld a,0
+    ld a,0                      ;entire matrix
     call StatDataInit
+
+    ;return
+    ret
 
 BCLP2_done_finish_end:
     ;zero out the lengthschange tracking variable and return
     ld a,0
-    ld (BCLP2_lengthschange),a
-    ret                         ;return
+    ld (lengthschange),a
+
+    ;write all volume constraint data
+    ld a,2                      ;volume constraint data only
+    call StatDataInit
+
+    ;return
+    ret   
 
 
 

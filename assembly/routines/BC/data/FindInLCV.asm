@@ -10,8 +10,8 @@
 ;           D <- diameter
 ;           zero flag set if byte not found, reset if found
 ;  affects: TBA
-;  total: b
-;  tested: no 
+;  total: 71b
+;  tested: yes 
 ;============================================================
 FindInLCV:
     ;extract length and diameter to search for

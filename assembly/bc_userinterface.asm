@@ -9,8 +9,8 @@
 ;  input: user keypress input
 ;  output: program branching
 ;  affects: assume everything
-;  total:  256b
-;  tested: no
+;  total:  274b
+;  tested: yes
 ;============================================================
 FinMenu_menu_data:
         .db 5,1,4,"EXIT"
@@ -157,8 +157,8 @@ FinMenu_notimplemented:
 ;  input: user keypress input
 ;  output: program branching
 ;  affects: assume everything
-;  total: 204b
-;  tested: no
+;  total: 216b
+;  tested: yes
 ;   NOTE: this routine is made to be jumped to
 ;============================================================
     jp BCStart ;just in case
@@ -238,6 +238,11 @@ BCStart_About:
     push hl  ;so that we return to BCStart
     jp AboutBuck                ;jump to BCStart
 BCStart_exit:
+    ;remove the off catcher
+    ld a,0                      ;remove
+    call OffInBC
+
+    ;exit nicely
     call _clrScrn               ;clear the screen
     call _dispDone              ;print 'Done' to screen
     call _jforcecmdnochar       ;exit program
@@ -264,8 +269,8 @@ BCStart_notimplemented:
 ;  input: user keypress input
 ;  output: variables -- log, log_dia, length, Li
 ;  affects: assume everything (I'm lazy right now)
-;  total: 582b
-;  tested: no
+;  total: 593b
+;  tested: yes
 ;   NOTE: this routine is made to be called
 ;============================================================
     jp BuckInput ;just in case!
@@ -855,7 +860,7 @@ FinDisplay3_loop_overcolsep1:
     ld h,(ix + _FinDisplay_offset_col1_data + 1)
     ld c,(ix + _FinDisplay_offset_table_body)
     ld b,0
-    add hl,bc ;DAVID-- THIS IS WHERE THE DISPLAY SHIFT MUST OCCUR
+    add hl,bc ;NOTE: THIS IS WHERE THE DISPLAY SHIFT MUST OCCUR
     push hl
     pop ix
     ld c,d                      ;recall C

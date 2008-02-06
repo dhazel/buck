@@ -38,14 +38,13 @@ BC.asm
 bc_data.asm 
 bc_includes.asm 
 BCK23.asm 
-   BCK :     >>> untested <<< 
+   BCK : 
       TamperChk 
       Buck 
       copyover_volatile 
       save_data 
-   Buck :     >>> untested <<< 
+   Buck : 
       MatrixAccess 
-      ErrTooLong 
       ArrayAccess_ne 
       Err_s_Overrun 
       ArrayAccess 
@@ -58,19 +57,21 @@ BCK23.asm
       Price2 
       SumWrdArray 
       SumWrdArray_rel 
+   BuckInterrupt : 
+      Buck_prematureexit 
 BCLP2.asm 
    LengthPrice : 
       TamperChk 
       BCLP2 
       copyover_data 
-   BCLP2 :     >>> untested <<< 
+   BCLP2 : 
       menu 
       menumessage 
       clearwindow 
       PrintArrayElm_drawscreen 
+      ArrayAccess_ne 
       ArryAccessW_ne 
       PrintArrayLWElm 
-      ArrayAccess_ne 
       ByteLShift 
       clearmenumessage 
       bigmessage 
@@ -79,14 +80,13 @@ BCLP2.asm
       Mult8Bit 
       Mult8to16Bit 
       save_data 
-      workingmessage 
       StatDataInit 
 BCStup.asm 
    BCStup : 
       TamperChk 
       BCSetup 
       copyover_data 
-   BCSetup :     >>> untested <<< 
+   BCSetup : 
       menu 
       Handoff_BCLP2 
       SwitchMill 
@@ -96,7 +96,7 @@ BCStup.asm
       save_data 
       clearwindow 
 bc_userinterface.asm 
-   FinMenu :     >>> untested <<< 
+   FinMenu : 
       FinDisplay3 
       menu 
       PrintErrors 
@@ -106,15 +106,16 @@ bc_userinterface.asm
       TestPrints 
       VarDump 
       menuhighmessage 
-   BCStart :     >>> untested <<< 
+   BCStart : 
       menu 
       Handoff_BCStup 
       AboutBuck 
+      OffInBC 
       BC_basic_calculate 
       BC_usercompare_calculate 
       BC_millcompare_calculate 
       menuhighmessage 
-   BuckInput :     >>> untested <<< 
+   BuckInput : 
       ClearInputs 
       menu 
       clearmenumessage 
@@ -129,7 +130,7 @@ bc_userinterface.asm
       ArryAccessW 
    headerbar : 
 TamperChk.asm 
-   TamperChk :     >>> untested <<< 
+   TamperChk : 
       save_data 
       bigmessage 
       AboutBuck 
@@ -165,6 +166,16 @@ routines/flags/SetCarryFlag.asm
    SetCarryFlag : 
 routines/flags/SetZeroFlag.asm 
    SetZeroFlag : 
+routines/interrupts/BCMOREkeypress.asm 
+   BCMOREkeypress :   *** unfinished ***   !!! untested !!!   >>> uncounted <<< 
+routines/interrupts/BCONkeypress.asm 
+   BCMOREkeypress :   *** unfinished ***   !!! untested !!!   >>> uncounted <<< 
+routines/interrupts/BConPowerup.asm 
+   BConPowerup :   *** unfinished ***   !!! untested !!!   >>> uncounted <<< 
+routines/interrupts/OffInBC.asm 
+   OffInBC : 
+routines/interrupts/UserSysRoutOff.asm 
+   UserSysRoutOff : 
 routines/math/Div8to16Bit.asm 
    Div8to16Bit : 
 routines/math/Mult8Bit.asm 
@@ -198,12 +209,13 @@ routines/test_functions/BugCatcher.asm
 routines/test_functions/Gotcha.asm 
    Gotcha : 
 routines/test_functions/TestPrints.asm 
-   TestPrints :     >>> untested <<< 
+   TestPrints : 
       PrintArray 
       PrintArrayW 
 routines/test_functions/test_templates.asm 
 routines/test_functions/VarDump.asm 
    VarDump : 
+      UserSysRoutOff 
       clearwindow 
       clearmenu 
       PrintArray 
@@ -228,7 +240,7 @@ routines/TIOS/MatrixZero.asm
       ResetZeroFlag 
       ResetCarryFlag 
 routines/TIOS/StringCreate.asm 
-   StringCreate :     >>> untested <<< 
+   StringCreate : 
       SetZeroFlag 
       ResetZeroFlag 
 routines/user_interface/bigmessage.asm 
@@ -243,6 +255,8 @@ routines/user_interface/CriteriaEditor.asm
       PrintArrayElm_drawscreen 
       PrintArrayLWElm 
       ArryAccessW_ne 
+      ArrayAccess_ne 
+      VolPercEd 
       bigmessage 
       clearmenu 
       menumessage 
@@ -258,16 +272,24 @@ routines/user_interface/menumessage.asm
    menumessage : 
 routines/user_interface/PrintArrayElm_drawscreen.asm 
    PrintArrayElm_drawscreen : 
+routines/user_interface/VolPercEd.asm 
+   VolPercEd : 
+      menu 
+      clearwindow 
+      menuhighmessage 
+      clearmenu 
+      menumessage 
+      InputInt 
 routines/user_interface/workingmessage.asm 
-   workingmessage :     >>> untested <<< 
+   workingmessage : 
 routines/BC/data/ClearInputs.asm 
    ClearInputs : 
 routines/BC/data/copyover_data.asm 
-   copyover_data :     >>> untested <<< 
+   copyover_data : 
 routines/BC/data/copyover_volatile.asm 
-   copyover_volatile :     >>> untested <<< 
+   copyover_volatile : 
 routines/BC/data/ExportResults.asm 
-   ExportResults :     >>> untested <<< 
+   ExportResults : 
       MatrixAccess 
       ConvOP1 
       MatrixZero 
@@ -275,7 +297,7 @@ routines/BC/data/ExportResults.asm
       ResetCarryFlag 
       SetCarryFlag 
 routines/BC/data/FindInLCV.asm 
-   FindInLCV :     >>> untested <<< 
+   FindInLCV : 
       ArrayAccess 
       ArrayAccess_ne 
       FindByte 
@@ -289,22 +311,27 @@ routines/BC/data/LCVCompaction.asm
 routines/BC/data/save_data.asm 
    save_data : 
 routines/BC/data/StatDataInit.asm 
-   StatDataInit :     >>> untested <<< 
+   StatDataInit : 
       MatrixAccess 
       ErrStatDataMissing 
       MatrixZero 
       StringCreate 
       ArrayToMatRow 
-   ErrStatDataMissing :     >>> untested <<< 
+      writeback 
+   ErrStatDataMissing : 
       bigmessage 
       workingmessage 
 routines/BC/data/SwitchMill.asm 
-   SwitchMill :     >>> untested <<< 
+   SwitchMill : 
       save_data 
       MatrixAccess 
       StatDataInit 
+routines/BC/data/writeback.asm 
+   writeback : 
+      copyover_data 
 routines/BC/handoff/Handoff_BCK23.asm 
-   Handoff_BCK23 :     >>> untested <<< 
+   Handoff_BCK23 : 
+      OffInBC 
       copyover_data 
       copyover_volatile 
       bigmessage 
@@ -314,55 +341,60 @@ routines/BC/handoff/Handoff_BCLP2.asm
       bigmessage 
 routines/BC/handoff/Handoff_BCStup.asm 
    Handoff_BCStup : 
+      OffInBC 
       copyover_data 
       bigmessage 
 routines/buck/algorithm/CriteriaPassFail.asm 
    CriteriaPassFail : 
       ArryAccessW_ne 
 routines/buck/data/ResetVolatileData.asm 
-   ResetVolatileData :     >>> untested <<< 
+   ResetVolatileData : 
 routines/buck/error_handlers/ClearErrors.asm 
-   ClearErrors :     >>> untested <<< 
+   ClearErrors : 
 routines/buck/error_handlers/ErrDataUnused.asm 
    ErrDataUnused : 
 routines/buck/error_handlers/ErrIntpolatOverrun.asm 
-   ErrIntpolatOverrun :     >>> untested <<< 
+   ErrIntpolatOverrun : 
       VarDump 
       Interpolate_endIntpolat 
 routines/buck/error_handlers/ErrLCVoverrun.asm 
-   ErrLCVoverrun :     >>> untested <<< 
+   ErrLCVoverrun : 
+      UserSysRoutOff 
       VarDump 
 routines/buck/error_handlers/ErrMaxDiam.asm 
-   ErrMaxDiam :     >>> untested <<< 
+   ErrMaxDiam : 
       VarDump 
       Volume_fi7 
 routines/buck/error_handlers/ErrMaxLgth.asm 
-   ErrMaxLgth :     >>> untested <<< 
+   ErrMaxLgth : 
       VarDump 
       Volume_fi7 
 routines/buck/error_handlers/ErrMinDiam.asm 
-   ErrMinDiam :     >>> untested <<< 
+   ErrMinDiam : 
       VarDump 
       Volume_fi7 
 routines/buck/error_handlers/ErrMinLgth.asm 
-   ErrMinLgth :     >>> untested <<< 
+   ErrMinLgth : 
       VarDump 
       Volume_fi7 
 routines/buck/error_handlers/ErrReverseTaper.asm 
-   ErrReverseTaper :     >>> untested <<< 
+   ErrReverseTaper : 
       VarDump 
       Interpolate_endIntpolat 
 routines/buck/error_handlers/Err_s_Overrun.asm 
    Err_s_Overrun : 
+      UserSysRoutOff 
       VarDump 
 routines/buck/error_handlers/ErrTooLong.asm 
    ErrTooLong : 
+      UserSysRoutOff 
       VarDump 
 routines/buck/error_handlers/ErrTooShort.asm 
    ErrTooShort : 
+      UserSysRoutOff 
       VarDump 
 routines/buck/math/Bcalculate.asm 
-   Bcalculate :     >>> untested <<< 
+   Bcalculate : 
       ArrayAccess_ne 
       Err_s_Overrun 
       FindInLCV 
@@ -379,13 +411,13 @@ routines/buck/math/Interpolate.asm
       ErrReverseTaper 
       Mult8Bit 
 routines/buck/math/Price2.asm 
-   Price2 :     >>> untested <<< 
+   Price2 : 
       ErrLCVoverrun 
       ArryAccessW_ne 
       ArrayAccess_ne 
       ConvOP1 
 routines/buck/math/Price2standalone.asm 
-   Price2standalone :     >>> untested <<< 
+   Price2standalone : 
       Price2 
 routines/buck/math/Volume.asm 
    Volume : 

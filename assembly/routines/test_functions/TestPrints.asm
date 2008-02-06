@@ -7,8 +7,8 @@
 ;  input:   p1, p2, Lf, Lf2, v1, v2, td1, td2  
 ;  output:  output printed to screen
 ;  affects: assume everything
-;  total: 254b/1036t (excluding func calls, including ret)
-;  tested: no
+;  total: 385b
+;  tested: yes
 ;============================================================
 TestPrints:
     call _newline

@@ -5,8 +5,8 @@
 ;                   size is encountered
 ;  NOTE: This is a special error handler routine designed
 ;           specifically for the Volume routine
-;  total: 26b
-;  tested: no
+;  total: 29b
+;  tested: yes
 ;============================================================
 ErrMinDiam:
     ld hl,err_occured

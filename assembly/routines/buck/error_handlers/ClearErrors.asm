@@ -6,13 +6,16 @@
 ;  input: -none- requires the error handlers
 ;  output: resets all error data fields
 ;  affects: most everything
-;  total: 71b/290t (including ret)
-;  tested: no
+;  total: 61b/250t (including ret)
+;  tested: yes
 ;============================================================
 ClearErrors:
     ld a,0                      ;reset FinMenu_menu_data error display settings
     ld (FinMenu_menu_data + 8),a
 
+    ld hl,err_occured
+    ld (hl),0
+    
     ld hl,err_MinDiam_occured
     ld (hl),0
     ld hl,err_MinDiam_bound

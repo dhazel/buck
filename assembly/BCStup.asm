@@ -41,9 +41,8 @@ BCStup:
 ;  input: user keypress input
 ;  output: program branching
 ;  affects: assume everything
-;  total: 1046b
-;  tested: no
-;   NOTE: This routine is made to be called!
+;  total: 1051b
+;  tested: yes
 ;============================================================
     jp BCSetup ;just in case!
 BCSetup_Welcome_text: .db "-- Bucking Setup --",0
@@ -159,11 +158,8 @@ BCSetup_mill_changemill_up:
     ;put the arrow
     call BCSetup_putarrow
 
-    ;update the mill data
-    call SwitchMill
-
-    ;return to getkey
-    jp BCSetup_mill_getkey
+    ;switch the mill
+    jp BCSetup_mill_changemill_switchmill
 BCSetup_mill_changemill_down:
     ;check for the bottom
     ld a,(mill_number)
@@ -177,6 +173,9 @@ BCSetup_mill_changemill_down:
     ;put the arrow
     call BCSetup_putarrow
 
+    ;switch the mill
+    jp BCSetup_mill_changemill_switchmill
+BCSetup_mill_changemill_switchmill:
     ;update the mill data
     call SwitchMill
 

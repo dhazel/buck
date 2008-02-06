@@ -5,8 +5,8 @@
 ;                   interpolation overrun occurs
 ;  NOTE: This is a special error handler routine designed
 ;           specifically for the Interpolate routine
-;  total: 15b
-;  tested: no
+;  total: 17b
+;  tested: yes
 ;============================================================
 ErrIntpolatOverrun: 
     ld hl,err_occured

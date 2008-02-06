@@ -14,10 +14,10 @@
 ;program versioning data
 #define _version_ID_name    "%btcv600"  ;TIOS variable holding the ID code
 #define _version_ID_code    "aaa000"    ;(6 characters)
-#define _welcome_text       "Bucking             Calculator          ver 6.0 alpha" ;the text displayed on the main screen
+#define _welcome_text       "Bucking             Calculator          ver 6.0 beta" ;the text displayed on the main screen
 
 ;program names
-pname_MainBuckingCalculator: .db 4,"BC60"
+pname_MainBuckingCalculator: .db 4,"BC60"  ;NOTE: also in BCONkeypress.asm !!!
 pname_BCLengthPriceEditor: .db 5,"BCLP2"
 pname_BCSetup: .db 6,"BCStup"
 pname_BCBuckingAlgorithm: .db 5,"BCK23"
@@ -62,6 +62,7 @@ mill_fill_name: .db "------  ",0  ;NOTE: mill name data regions are same size
 data_start:
 
 TamperChk_firstrun_status: .db 1        ;set if program has never run before
+lengthschange: .db 0        ;set if lengths changed during call to BCStup
 
 ;multiple mills-----------------------------------------------
 mill1_name: .db "mill a  ",0  ;NOTE: ALL mill name data regions must same size
@@ -82,15 +83,15 @@ minmax_td_mill2: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
 vol_constrain_mill2: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;volume criteria
 vol_constraint_percent_mill2: .db 0 ;minimum production for constrained logs
 mill2_LCV_size: .db 14 ;number of elements (starting from 0) in the LCV
-mill3_name: .db "freres  ",0 
+mill3_name: .db "intrfor ",0 
 mill3_number: .db 2
 mill3_distance: .db 0
-prices_mill3: .dw 580,580,580,580,580,580,580,580,580,0,0,0,0,0,0,0,0,0,0,0
-LCV_mill3: .db 12,13,23,31,39,33,18,27,35,255,0,0,0,0,0,0,0,0,0,0,255
-minmax_td_mill3: .dw 8,8,8,8,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
+prices_mill3: .dw 340,340,340,340,420,420,420,420,470,470,340,420,470,0,0,0,0,0,0,0
+LCV_mill3: .db 19,21,23,25,29,31,33,35,39,41,17,27,37,0,0,0,0,0,0,0,255
+minmax_td_mill3: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
 vol_constrain_mill3: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;volume criteria
 vol_constraint_percent_mill3: .db 0 ;minimum production for constrained logs
-mill3_LCV_size: .db 8 ;number of elements (starting from 0) in the LCV
+mill3_LCV_size: .db 12 ;number of elements (starting from 0) in the LCV
 mill3_end:  ;marks the end of mill3 data
 ;/multiple mills----------------------------------------------
 
@@ -310,8 +311,7 @@ FinDisplay3_millcompare_display:
     .db _result_offset_name,_result_offset_sum_p,_result_offset_lengths
     .db _result_offset_p
 
-;bigmessage option data
-no_text: .db "       NO       ",0
+;bigmessage menu data
 cancel_text: .db "   CANCEL  ",0
 continue_text: .db "  CONTINUE ",0
 okay_text: .db "    OKAY   ",0
@@ -329,5 +329,8 @@ none_text: .db "none",0
 empty_text: .db " ",0
 clearselection_text: .db "     ",0
 working_text: .db "Working...",0
+yes_text: .db "yes",0
+no_text: .db "no",0
+set_text: .db "set",0
 
 bc_data_end:

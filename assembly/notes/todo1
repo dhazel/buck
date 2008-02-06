@@ -318,7 +318,6 @@ x   - make sure that assembly program handoff can traverse two levels
 x       -> for handing off to BuckStup to BuckLP2
 x make CriteriaEditor display "  " rather than the non-descript "0" for 
 x   nonexistant criteria
-NOTE: the duplicate-entry check in BuckLP2 is disabled!!
 / add more shippable lengths entries
 x make stat data easily saveable, "copyable"
 x   - one copied mill
@@ -418,8 +417,8 @@ x           - millcompare
 x           - guesscompare
 x           - basic
 x       - add it to the includes generator
-- prepare the Buck algorithm for upcoming enhancements
-    - price skew number to be used in volume constraint framework
+x prepare the Buck algorithm for upcoming enhancements
+x   - price skew number to be used in volume constraint framework
 x       - add row to bcmill* TIOS variables
 x       - add constraint criteria to bc_data 
 x       - add export of constraint criteria
@@ -467,10 +466,12 @@ x           - add Bcalculate to BC60
 x               - for each calculation mode
 x               - run Bcalculate after running Buck
 x       - check to make sure that millcompare mode loads p-factor correctly
-        - add edit capacity to CriteriaEditor
-            - write percentage field and identifier array to the stat matrices
-            - ask to re-initialize the price skew (p-factor set to 1)
-        - add criteria check to BCLP2 display 
+x       - add edit capacity to CriteriaEditor
+x           - write percentage field and identifier array to the stat matrices
+/           - ask to re-initialize the price skew (set p-factor to 1)
+/               - after any change to the volume constraint settings
+x       - add criteria check to BCLP2 display 
+x           - update the delete and create functions for the new criteria array
 x   - switch copyblock choice function from (>=) to just (>)
 x       - simple cp command switch
 x       -> this will reverse the effective priority order and decrease the 
@@ -479,14 +480,66 @@ x       -> this will also enable specialized copyblock choice criteria like
 x           (percent better value) or similar
 x   - reverse LCV traversal
 x       - remove need for 255 termination
-- fix redo bug in TIBASIC programs
-    - acting as though it is redoing when it is really not
-- fix bug in Price2standalone
-    - gives false output unless using a proper find function
-- fix 11 - 25 - 5 interfor price bug
-    - user guess beats the calculator's result
-- add interrupt timer to halt execution if too much time passes
-- make it impossible to turn the calculator off while in a "handoff" program
+x fully remove BCLP2 duplicate entry check
+x add interrupt to halt execution if the [ EXIT ] key is pressed during BCK23
+x   - load the interrupt when BCK23 starts
+x   - turn it off when BCK23 exits (or is halted)
+x   - remove "tree is too long to safely calculate" error
+x   - fix the error handler exit problem
+x       - fix the include file crossover problem
+x           - error crossover with Bcalculate
+x           - errors (or anything) that exit the program needs to turn off user 
+x               system routines
+x               - user off routine
+x               - user interrupt routine
+x               - make this a simple generic system flags modification, not a 
+x                   call that will run the risk of dependency conflicts
+x add special "catch off" user off routine to the Handoff routines
+x   - load the interrupt when handoff starts
+x   - unload it when handoff ends 
+x   - warn the user that any data changes are not saved unless he goes back to
+x       the main screen
+x   - clear the screen
+x add "catch off" user off routine to exit cleanly if the "off button" is pushed
+x   - load in BC
+x   - unload on call, or when BC exits
+x   - load on return from a handoff
+x   - clear the screen
+x fix interpolate error when all log entries are filled
+x   - simple off-by-one loop error
+x fix bug in Price2standalone
+x   - gives false output unless using a proper find function
+x       - removed find function all together
+x fix 11 - 25 - 5 interfor price bug
+x   - user guess beats the calculator's result
+x       - an LCV element was getting skipped
+/ re-add the "tree too long" error and set it to our maximum data size of 255
+x   - check must be placed in BuckInput
+x       - check is already there
+x check for an error handler that is setting the main error flag but not either
+x   setting its own, or not included in PrintErrors
+x   - error_occured is not getting cleared properly
+x       - had been removed from ClearErrors
+/ fix Div8to16Bit bug
+x   -> can this bug be recreated?
+x       - document recreation circumstances
+x           - very large input length to log length ratios
+x               - DESCISION: With 8 foot log lengths the bug only occurs when
+x                   an input length of 120 feet or greater is given by the user.
+x                   Most loggers will use a 50 foot tape measure, with some
+x                   rare folks using a 100 foot at the extreme maximum, so this
+x                   bug will never be encountered. The alternative is to use 
+x                   floating-point math in the interpolator's division stage, 
+x                   but this increases execution time by approximately 50% 
+x                   (not acceptable).
+x           - NOTE: diameter size may have some effect too, but in practice
+x               this appears minimal
+x   - NOTE: This may have to be revisited if timber cruising becomes a higher 
+x       priority, but then I would likely also be coding for a different device 
+x       if I went that direction!
+x fix redo bug in TIBASIC programs
+x   - acting as though it is redoing when it is really not
+x update all program status fields so compile is completely clean
 
 
 
@@ -529,9 +582,6 @@ x           - obfuscation is heavy regarding how to access Input from assembler
         -> needs to be hard indexing rather than "run-up" indexing
         - fix if necessary
 - fix FinDisplay3 5-log display problem
-- fix Div8~16Bit bug
-    -> can this bug be recreated?
-        - document recreation circumstances
 - add more functions to BuckStat
     - compute tarif numbers
     - compute basal area
@@ -551,3 +601,18 @@ x           - obfuscation is heavy regarding how to access Input from assembler
 
 
 
+
+Thoughts... some of which appear not to work
+
+- add interrupt to TIOS that starts BC60 whenever the [ ON ] button is pressed
+    - load the interrupt when BC60 is exited for the TIOS
+    - turn it off when BC60 starts
+- add "user on" routine to launch directly into the program
+    - install using TamperChk at first run
+    - allow user to exit to the TIOS
+        - ask (/notify) first
+- make data handling more robust
+    - use BC60 as the central data store (can't do this for BCLP2)
+        - write all data back to BC60 immediately
+            - use new routine...  "writeback"
+                - simply wrap copyover_data

@@ -10,8 +10,8 @@
 ;  output:  new string created in TIOS
 ;  affects: TIOS string variable
 ;           assume most everything
-;  total: 42b
-;  tested: no
+;  total: 65b
+;  tested: yes
 ;===============================================================================
 StringCreate:
     push de                 ;pointer to string data

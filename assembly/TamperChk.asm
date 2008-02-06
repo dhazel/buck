@@ -16,8 +16,8 @@
 ;  output:  the TIOS variable %btcv
 ;           permission to use program and/or full functionality
 ;  affects: assume everything 
-;  total: 191b
-;  tested: no
+;  total: 255b
+;  tested: yes
 ;============================================================
     jp TamperChk ;just in case!
 TamperChk_ID_name: .db 8,_version_ID_name   ;buck tamper check external variable

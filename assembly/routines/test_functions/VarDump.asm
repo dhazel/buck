@@ -9,7 +9,7 @@
 ;  input:   status_iterator, Li, td, it, p, v  
 ;  output:  the inputs printed to screen
 ;  affects: assume everything
-;  total: 187b (including ret)
+;  total: 190b
 ;  tested: yes
 ;============================================================
     jp VarDump  ;just in case
@@ -20,10 +20,15 @@ VarDump_it_text: .db "it:",0
 VarDump_p_text: .db "p:",0
 VarDump_v_text: .db "v:",0
 VarDump:
+    ;turn off user system routines
+    call UserSysRoutOff    ;NOTE: excludes the user-on routine
+
+    ;get the window ready
     call clearwindow
     call clearmenu
     call _homeup
 
+    ;start printing the screen
     ld hl,VarDump_status_iterator_text
     call _puts
     ld hl,status_iterator

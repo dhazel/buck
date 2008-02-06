@@ -3,11 +3,14 @@
 ;===============================================================================
 ; ErrLCVoverrun -- jumped to or called (currently by Price2)
 ;                   if the LCV array has been overrun
-;  total: 61b
-;  tested: no
+;  total: 74b
+;  tested: yes
 ;===============================================================================
 ErrLCVoverrun_text: .db "Algorithm Error:     LCV overrun",0 
 ErrLCVoverrun: ;print error message and exit program
+    ;turn off user system routines
+    call UserSysRoutOff    ;NOTE: excludes the user-on routine
+
     ;print error message to screen
     call _clrScrn
     call _homeup

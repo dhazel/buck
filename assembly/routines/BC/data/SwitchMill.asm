@@ -9,8 +9,8 @@
 ;  output: current mill is saved and switched out for a new
 ;           one
 ;  affects: assume everthing
-;  total: 85b
-;  tested: no
+;  total: 122b
+;  tested: yes
 ;   NOTE: the mill_number is indexed from zero
 ;   NOTE: if the mill number is bad, then nothing happens
 ;============================================================

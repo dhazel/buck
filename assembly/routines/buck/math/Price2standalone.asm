@@ -8,8 +8,8 @@
 ;           B = index of current LCV element
 ;  output:  DE  = (price * 10)
 ;  affects: assume everything
-;  total: 35b/169t (excluding func calls, including ret)
-;  tested: no
+;  total: 20b/108t (excluding func calls, including ret)
+;  tested: yes
 ;============================================================
     jp Price2standalone ;just in case!
 Price2standalone_index: .db 0

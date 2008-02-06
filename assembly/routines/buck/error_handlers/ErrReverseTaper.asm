@@ -5,8 +5,8 @@
 ;                   tree taper is encountered
 ;  NOTE: This is a special error handler routine designed
 ;           specifically for the Interpolate routine
-;  total: 16b
-;  tested: no
+;  total: 18b
+;  tested: yes
 ;============================================================
 ErrReverseTaper: 
     ld hl,err_occured

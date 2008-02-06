@@ -5,8 +5,8 @@
 ;                   encountered
 ;  NOTE: This is a special error handler routine designed
 ;           specifically for the Volume routine
-;  total: 37b
-;  tested: no
+;  total: 40b
+;  tested: yes
 ;============================================================
 ErrMaxLgth:
     ld ix,err_occured

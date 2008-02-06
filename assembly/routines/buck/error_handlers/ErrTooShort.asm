@@ -4,11 +4,14 @@
 ; ErrTooShort -- called by any execution that determines that
 ;                   the tree is too short for the mill.
 ;                   As of this writing Buck calls this error.
-;  total: 61b
+;  total: 70b
 ;  tested: yes
 ;============================================================
 errTooShort_text: .db "The tree is too short for the mill!",0 
 ErrTooShort: ;if this happens simply exit the program
+    ;turn off user system routines
+    call UserSysRoutOff    ;NOTE: excludes the user-on routine
+
     ;print error message to screen
     call _clrScrn
     ld hl,0

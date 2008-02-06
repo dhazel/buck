@@ -4,18 +4,19 @@
 ; StatDataInit -- initializes the statistics matrices (one for each mill), and
 ;               fills the first row of the current mill matrix with the LCV
 ;               elements, clears all data in the current mill statistics matrix
-;  input:   LCV - the Length Choice Vector, all available log lengths
-;           LCV_size - the size of the LCV (starting from 0)
-;           currentmill_number - the number of the current mill
-;           if  A == 1, then initialize current mill name variable
-;            else, initialize current mill matrix
+;  input:   LCV (the Length Choice Vector, all available log lengths)
+;           LCV_size (the size of the LCV (starting from 0))
+;           currentmill_number (the number of the current mill)
+;           if  A == 1, then initialize current mill name variable only
+;           if  A == 2, then initialize the volume constraint data only
+;            else, clear and initialize the entire current mill matrix
 ;  output:  - if any stat data matrices are missing, they are created
 ;           - if initialized, the current mill matrix is cleared and first row 
 ;               is filled with the LCV elements
 ;           - if initialized, the current mill name variable is overwritten
 ;  affects: assume everything
-;  total: 158b
-;  tested: no 
+;  total: 316b
+;  tested: yes 
 ;===============================================================================
 StatDataInit:
     push af                     ;A == command variable
@@ -135,21 +136,12 @@ StatDataInit_currentmillcheck_end:
     pop af              ;A == command variable
     push bc             ;mill matrix name
 
-    ;check to update the mill name string in TIOS
+    ;check what to initialize
     cp 1 
-    jp nz,StatDataInit_nonameinit
-    ld a,1              ;force overwrite of current string variable
-    call StringCreate   ;create the string
-    pop hl              ;get this off the stack
-    ;reset the error display status
-    ld a,0
-    ld (errStatDataMissing_displayed),a
-    ;return
-    ld a,0
-    ld (errStatDataMissing_displayed),a
-    call _runindicoff
-    ret
-StatDataInit_nonameinit:
+    jp z,StatDataInit_nameinit
+    cp 2
+    jp z,StatDataInit_volconstraintinit
+StatDataInit_matrixinit:
     ;generic mill matrix basic initialization
     pop hl              ;mill matrix name
     push hl
@@ -167,7 +159,7 @@ StatDataInit_nonameinit:
     ld e,a
     ld a,0                  ;databyte array
     call ArrayToMatRow  
-
+StatDataInit_volconstraintinit:
     ;load in the mill's volume constraint percentage value
     ld a,(vol_constraint_percent);A <- volume constraint percentage
     call _setXXop1              ;OP1 <- volume constraint percentage
@@ -188,20 +180,35 @@ StatDataInit_nonameinit:
     ld a,0                  ;databyte array
     call ArrayToMatRow
 
+    ;wherever we are, we also need to sync internal and external data to be safe
+    call writeback
+
+    ;return
+    jp StatDataInit_return
+StatDataInit_nameinit:
+    ld a,1              ;force overwrite of current string variable
+    call StringCreate   ;create the string
+    pop hl              ;get this off the stack
+    ;reset the error display status
+    ld a,0
+    ld (errStatDataMissing_displayed),a
+
+    ;return
+    jp StatDataInit_return
+StatDataInit_return:
     ;return
     ld a,0
     ld (errStatDataMissing_displayed),a
     call _runindicoff
     ret
 
-
    
 ;============================================================
 ; ErrStatDataMissing -- called when StatDataInit determines that statistics
 ;                   data storage in TIOS is missing, data storage space is then
 ;                   re-created
-;  total: 99b
-;  tested: no
+;  total: 151b
+;  tested: yes
 ;============================================================
 errStatDataMissing_text: .db "Detected missing      statistics storage   space!  Recreating   it.... Some stat     data has likely      been lost.",0 
 errStatDataMissing_bigmessage: .dw errStatDataMissing_text,okay_text,okay_text

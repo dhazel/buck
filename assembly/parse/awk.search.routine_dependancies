@@ -25,11 +25,21 @@ BEGIN {ORS = " "}
             in_subroutine = 1
         }
     }
-    # print untested notification
+    # print untested, unfinished, and uncounted notifications
     if(/^; +tested:/){
-        if($3 ~ /no/){
-            print("    >>> untested <<<")
+        if(/incomplete/){
+            print("  *** unfinished ***")
         }
+        if(/no/){
+            print("  !!! untested !!!")
+        }
+        if(/uncounted/){
+            print("  >>> uncounted <<<")
+        }
+    }
+    # print my important notes
+    if(match($0,/DAVID/) || match($0,/FIXME/)){
+        print("\n- "substr($0,RSTART))
     }
     # print calls and jumps if they refer outside the current routine
     if((/^ +call [^_][,_~a-zA-Z0-9]+/) || (/^ +jp [,_~a-zA-Z0-9]+/)){

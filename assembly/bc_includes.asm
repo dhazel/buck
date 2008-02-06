@@ -5,6 +5,7 @@
                                                             
 ;#include "ti86asm.inc"
 
+;F REGISTER FLAG BITS-----------------------------------------------------
 #define carryFlag           0
 #define addorsubFlag        1
 #define parityoverflowFlag  2
@@ -12,15 +13,25 @@
 #define zeroFlag            6
 #define signFlag            7
                                         
+;OP REGISTER LOCATIONS----------------------------------------------------
 #define _op1Location $C089
 #define _op2Location $C094
 #define _op3Location $C09F
 #define _op4Location $C0AA
 
+;PROGRAM EXECUTION--------------------------------------------------------
 _asm_exec_ram       equ     0D748h  ; start address for all ASM programs
 _asapvar            equ     0D6FCh  ; name of the current asm prog
 _exec_assembly      equ     5730h   ; exec assembly prog op1
 _exec_basic         equ     4C47h	; basic program in op1
+_alt_int_chksum     equ     0D2FDh	; checksum for interrupt
+_alt_interrupt_exec equ     0D2FEh	; interrupt
+_alt_on_chksum      equ     0D48Fh	; checksum for on_exec
+_alt_on_exec        equ     0D490h	; executed when turned on
+_alt_off_chksum     equ     0D558h	; checksum for off_exec
+_alt_off_exec       equ     0D559h	; executed when turned off
+
+;MISCELANEOUS-------------------------------------------------------
 _ex_ahl_bde         equ     45F3h   ; exchange ahl and bde
 _inc_ptr_ade        equ     45EFh   ; ade = ade + 1
 _dec_ptr_ade        equ     46BFh	; ade = ade - 1
@@ -83,6 +94,7 @@ _ROUND              equ     54C0h   ; round op1; D holds decimal place to round 
 
 _mov5b              equ     4297h   ; move 5 bytes at (hl) to (de)
 _mov6b              equ     4293h   ; move 6 bytes at (hl) to (de)
+_clrLCD             equ     4A7Eh	; clear LCD screen
 _clrScrn            equ     4A82h   ; clear LCD screen and _textShadow
 _clrWindow          equ     4A86h   ; clear between _winTop and _winBtm
 _homeup             equ     4A95h   ; cursor to top left of home screen
@@ -115,15 +127,24 @@ _scrollUp           equ     4A6Bh   ; scroll screen up
 _scrollDown         equ     4A7Ah   ; scroll screen down
 
 
+;TIOS FLAGS---------------------------------------------------------
 textflags           equ     $05     ; TI-OS text flags offset 
-textinverse         EQU     3       ; TI-OS text-inverse flag offset
+textinverse         equ     3       ; TI-OS text-inverse flag offset
+
 shiftflags          equ     $12     ; TI-OS shift flags offset
 shiftLwrAlph        equ     5
 shiftAlpha          equ     4
 shiftALock          equ     6
 shift2nd            equ     3
  
+exceptionflg        equ     $23 
+alt_int             equ     2		; enable user interrupt routine 
+alt_on              equ     3		; enable user on routine 
+alt_off             equ     7		; enable user off routine 
+ 
+;TIOS CHARACTERS-------------------------------------------------------
 Lspace      equ     020h
+Lpercent    equ     025h
 Ldollar     equ     024h
 Lbar        equ     07Ch
 LcapB       equ     042h
@@ -201,6 +222,7 @@ Lx          equ     078h
 Ly          equ     079h
 Lz          equ     07Ah
 
+;TIOS KEYBOARD SCANCODES-------------------------------------------------
 kF1         equ     0C2h
 kF2         equ     0C3h
 kF3         equ     0C4h

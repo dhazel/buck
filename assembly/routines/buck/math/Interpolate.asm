@@ -16,7 +16,7 @@
 ;           * does not affect the OP registers
 ;           * does not affect the stack
 ;           * does not affect IX 
-;  total: 92b/435t (excluding func calls, including ret)
+;  total: 94b/433t (excluding func calls, including ret)
 ;  tested: yes
 ;============================================================
 Interpolate:
@@ -30,7 +30,7 @@ Interpolate:
                     ;def interpolate(ux,x,y):
                     ;    j = 0 
                     ;    T = 0      
-    ld c,_log_entries;    n = len(x) - 1
+    ld c,_log_entries + 1;    n = len(x) - 1
     ;[doesn't need ];    if ux == x[n]:                  #check endpoint of input vector
     ;[ implementing];       yu = y[n] 
     ;[NOTE -- d holds dia]
@@ -46,6 +46,7 @@ Interpolate_while1: ;        while x[j] <= ux:           #run up to the vector p
     jp Interpolate_while1
 Interpolate_ilehw1: 
     dec hl ;[NOTE -- wonky! but clearer this way. Losing one dec or inc will drop 6 clks]            
+    dec c
     ;cp (hl)        ;        if T != ux:
     ;jp z,Interpolate_esle5 ;[moved into loop above/\/\]
      
@@ -104,14 +105,15 @@ Interpolate_overTaperError:
     ld a,d
     add a,e ;[a == (x2 - x1)]
     ld d,a ;[d == (x2 - x1)]
-    call _divHLbyA ;[this does the same thing as Div8~16Bit]
-    ;call Div8-16Bit ;[hl == (y1*(x2 - ux) + y2*(ux - x1))/(x2 - x1)]
+    call _divHLbyA ;[this does the same thing as Div8to16Bit, uses A not D]
+    ;call Div8to16Bit ;[hl == (y1*(x2 - ux) + y2*(ux - x1))/(x2 - x1)]
     ld d,l
     
     jp Interpolate_endIntpolat;[jp Interpolate_fi5]   
 Interpolate_esle5:  ;        else:
                     ;            yu=y[j-1] 
     ;[don't like repeating functionality, but here we must]
+    dec c
     ld a,_log_entries
     sub c
     ld b,a ;[b = j]

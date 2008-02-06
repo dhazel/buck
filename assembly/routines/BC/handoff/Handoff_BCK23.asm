@@ -7,14 +7,18 @@
 ;  output: a different assembly program (BCK23) is called
 ;           and execution is handed off to it
 ;  affects: assume everthing
-;  total: 114b
-;  tested: no
+;  total: 135b
+;  tested: yes
 ;============================================================
     jp Handoff_BCK23 ;just in case!
 Handoff_BCK23_bigmessage_text: .db "The Bucking core       executable is not    present on this      calculator",0
 Handoff_BCK23_bigmessage: .dw Handoff_BCK23_bigmessage_text,okay_text,okay_text
 
 Handoff_BCK23:
+    ;install the off catcher
+    ld a,2                              ;install for handoff
+    call OffInBC
+
     ;check for existance of BCK23
     ld hl,pname_BCBuckingAlgorithm-1      ;copy anything before string name 
                                             ; for type byte
@@ -33,9 +37,17 @@ Handoff_BCK23:
     ;BEHOLD! the handoff!
     call _exec_assembly             ;exec assembly program named in op1
 
+    ;reset the off catcher
+    ld a,1                          ;install for BC
+    call OffInBC
+
     ;return
     ret
 Handoff_BCK23_nonexistant:
+    ;reset the off catcher
+    ld a,1                          ;install for BC
+    call OffInBC
+
     ;display big message, wait for keypress and return
     ld ix,Handoff_BCK23_bigmessage
     call bigmessage

@@ -10,7 +10,7 @@
 ;           value is copied into 'Li'
 ;  affects: assume everthing
 ;  total: 33b
-;  tested: no
+;  tested: yes
 ;============================================================
 ResetVolatileData:
     ld b,data_volatile_end - data_volatile_start

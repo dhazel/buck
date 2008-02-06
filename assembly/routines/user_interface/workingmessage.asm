@@ -5,8 +5,8 @@
 ;  input: none
 ;  output: message is printed to screen
 ;  affects: assume everything
-;  total: b
-;  tested: no
+;  total: 20b
+;  tested: yes
 ;==============================================================================
 workingmessage:
     call _clrScrn               ;clear the screen

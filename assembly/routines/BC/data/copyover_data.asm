@@ -9,8 +9,8 @@
 ;           data_start = start of data block
 ;           data_end = end of data block
 ;   affects: assume everthing
-;   total: 60b (including ret)
-;   tested: no
+;   total: 32b (including ret)
+;   tested: yes
 ;   NOTE: This is a slight modification of Jonah Cohen's highly optimized 
 ;           writeback routine for saving high scores and saved games. It copies 
 ;           all data between data_start and data_end.

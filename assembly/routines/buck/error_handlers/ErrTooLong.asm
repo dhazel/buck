@@ -4,11 +4,14 @@
 ; ErrTooLong -- called by any execution that determines that
 ;                   the tree is too long for the mill.
 ;                   As of this writing Buck calls this error.
-;  total: 67b
+;  total: 76b
 ;  tested: yes
 ;============================================================
 errTooLong_text: .db "The tree is too long to safely calculate!",0 
 ErrTooLong: ;if this happens simply exit the program
+    ;turn off user system routines
+    call UserSysRoutOff    ;NOTE: excludes the user-on routine
+
     ;print error message to screen
     call _clrScrn
     ld hl,0

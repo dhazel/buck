@@ -9,7 +9,7 @@
 .org _asm_exec_ram ;PROGRAM START
 ;
 ; BCK -- main execution block for BCK*.asm
-;   tested: no
+;   tested: yes
 ;   NOTE: these comments are here for compliance with the dependancy parser
 ;
     jp BCK
@@ -55,12 +55,20 @@ BCK_badcall:
 ;  input: TODO
 ;  output: TODO
 ;  affects: assume everything
-;  total: 566b (including ret)
-;  tested: no -- heavily
+;  total: 717b (including ret)
+;  tested: yes -- heavily
 ;============================================================
     jp Buck         ; just in case!
 Buck_text: .db "Please Wait          ",0
+Buck_SP: .dw 0
 Buck:
+    ;save the current stack pointer in case of premature interrupt exit
+    ld (Buck_SP),sp
+
+    ;install the interrupt
+    ld a,1                  ;install
+    call BuckInterrupt
+
     ;get firstchoice and secondchoice column names and mill numbers
     ld hl,mill_name 
     ld de,firstchoice_result_name
@@ -120,11 +128,6 @@ Buck_millcheck_done:
     ld hl,Buck_text
     call _puts    
     
-    ld a,(length)               ;[check maximum length]
-    ld hl,max_length
-    cp (hl) ;[maximum tree length beyond which calculator processes for too long etcetera]
-    call nc,ErrTooLong
-                    ;
     ld hl,LCV       ;    for entry in LCV:               #find minimum length
     ld a,(LCV_size)
     ld b,a
@@ -230,6 +233,7 @@ Buck_while0:
     ld a,(hl)
     cp d
     jp c,Buck_no255
+    jp z,Buck_no255
     dec c           ;                   it[s] = it[s] - 1
     dec hl  ;[LCV index address]
     jp m,Buck_elihw0;                   if (it[s] == -1):
@@ -285,11 +289,10 @@ Buck_fi1:                ;
                     ;
                     ;
     
-    
     push hl ;[Li[s]] ;[NOTE -- don't forget to pop these out later!]
     push bc ;[b == s]
     ld a,b
-    ld (status_iterator),a ;[useful for debugging, used by VarDump only]
+    ld (status_iterator),a ;[useful for debugging]
     ld hl,Li         ;                                   #calculate length price
     call SumBytArray ;       dia = interpolate.interpolate(sum(Li),log,log_dia)
         ;interpolate--------------------------------------------------
@@ -338,7 +341,7 @@ Buck_overskip:
     ;[B is not still s]
         ;/price-------------------------------------------------------
 
-    dec (ix)
+    dec (ix)        ;NOTE: this is in the "it" array
     
     pop bc  ;[b == s]
     ld hl,p ;[p[s] = price]
@@ -483,7 +486,94 @@ Buck_end:
     ei               ;[enable interrupts] [re-enables calculator automatic halt]
 ;/buck algorithm================================================================
 
+    ;remove the interrupt
+    ld a,0                  ;remove
+    call BuckInterrupt
+
     ret         ; return
 
+Buck_prematureexit:     ;interrupt called for an early exit
+    ;load back the initial stack pointer
+    ld sp,(Buck_SP)
 
+    ;put something on the stack
+    push af
+
+    ;wrap things up and return smoothly
+    jp Buck_end
+
+
+
+;============================================================
+; BuckInterrupt -- Installs and removes the interrupt that checks for the 
+;           [ EXIT ] key durring execution. Halts execution if [ EXIT ] key is 
+;           pressed.
+;  input:   A == 1  if interrupt is to be installed, else interrupt is removed
+;  output:  manages the interrupt's state
+;  affects: assume everything
+;  total: 76b (including ret)
+;  tested: yes
+;============================================================
+BuckInterrupt:
+    ;turn off the interrupt so it is not called when partially installed
+    res alt_int,(iy + exceptionflg)     
+
+    ;return after turning off interrupt if it is not to be installed
+    cp 1
+    ret nz
+
+    ;copy our code to the interrupt calling area
+    ld hl,BuckInterrupt_start
+    ld de,_alt_interrupt_exec
+    ld bc,BuckInterrupt_end - BuckInterrupt_start 
+    ldir 
+
+    ;set up checksum byte 
+    ld a,(_alt_interrupt_exec)  
+    ld hl,_alt_int_chksum + ($28 * 1) 
+    add a,(hl) 
+    ld hl,_alt_int_chksum + ($28 * 2) 
+    add a,(hl) 
+    ld hl,_alt_int_chksum + ($28 * 3) 
+    add a,(hl) 
+    ld hl,_alt_int_chksum + ($28 * 4) 
+    add a,(hl) 
+    ld hl,_alt_int_chksum + ($28 * 5) 
+    add a,(hl) 
+    ld (_alt_int_chksum),a 
+
+    ;turn the interrupt on 
+    set alt_int,(iy + exceptionflg)
+             
+    ret
+BuckInterrupt_start:
+    push af              ;we use this
+
+    ;poll the keyport for the [ EXIT ] key
+    ld a,%10111111      ;bitmask for the [ EXIT ] key's row
+    out (1),a           ;the keyport is port 1
+    nop                 ;wait to get a result back
+    nop
+    in a,(1)            ;get the result
+    bit 6,a             ;[ EXIT ]'s position
+    jr nz,BuckInterrupt_return
+
+    ;turn off the interrupt
+    res alt_int,(iy + exceptionflg)
+
+    ;exit prematurely
+    pop af          ;pop our af back
+    pop af          ;pop out the return address to the main interrupt
+    pop af          ;even pop out the return address to the running program
+    exx             ;retrieve the normal operation registers
+    ex af,af'
+    jp Buck_prematureexit   ;go to the premature exit code
+BuckInterrupt_return:
+    pop af 
+    ret 
+BuckInterrupt_end:
+
+
+
+;*******************************************************************************
 address_after_prog: $

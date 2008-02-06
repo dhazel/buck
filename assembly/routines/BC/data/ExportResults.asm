@@ -24,8 +24,8 @@
 ;           - carry flag is set and nothing is done if the matrix still contains
 ;               fresh data
 ;  affects: assume everything
-;  total: 241b
-;  tested: no
+;  total: 273b
+;  tested: yes
 ;============================================================
     jp ExportResults        ;just in case
 ExportResults:

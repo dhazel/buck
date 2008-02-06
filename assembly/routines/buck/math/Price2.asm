@@ -12,8 +12,8 @@
 ;  output:  DE  = (price * 10)
 ;  affects: assume everything
 ;           * does not affect IX
-;  total: 44b/239t (excluding func calls, including ret)
-;  tested: no
+;  total: 68b/360t (excluding func calls, including ret)
+;  tested: yes
 ;============================================================
 Price2:
     ;[c == length; op1 == volume]
