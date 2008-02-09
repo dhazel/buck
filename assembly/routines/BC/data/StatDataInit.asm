@@ -1,9 +1,8 @@
 
 
 ;===============================================================================
-; StatDataInit -- initializes the statistics matrices (one for each mill), and
-;               fills the first row of the current mill matrix with the LCV
-;               elements, clears all data in the current mill statistics matrix
+; StatDataInit -- initializes the statistics data, and syncs the data stored
+;               in TIOS with the data stored internally
 ;  input:   LCV (the Length Choice Vector, all available log lengths)
 ;           LCV_size (the size of the LCV (starting from 0))
 ;           currentmill_number (the number of the current mill)
@@ -12,16 +11,37 @@
 ;            else, clear and initialize the entire current mill matrix
 ;  output:  - if any stat data matrices are missing, they are created
 ;           - if initialized, the current mill matrix is cleared and first row 
-;               is filled with the LCV elements
+;               is filled with the LCV elements, the second-to-last row is 
+;               filled with the vol_constrain array, and the price-factor and
+;               vol_constraint_percent are written to elements (7,8) and (7,9)
+;               respectively
 ;           - if initialized, the current mill name variable is overwritten
 ;  affects: assume everything
-;  total: 316b
-;  tested: yes 
+;  total: 355b
+;  tested: yes
 ;===============================================================================
 StatDataInit:
     push af                     ;A == command variable
     call _runindicon
 
+    ;check for existance of the output matrix and initialize (bcstat uses it)
+    ld hl,output_matrix_name    ;variable name
+    ld a,0                      ;get element
+    ld d,_bcout_rows            ;last row
+    ld e,_bcout_columns         ;last column
+    call MatrixAccess
+    jp z,StatDataInit_initoutm
+    jp c,StatDataInit_initoutm
+    jp StatDataInit_noinitoutm
+StatDataInit_initoutm:
+    ld hl,output_matrix_name    ;variable name
+    ld a,2                      ;create
+    ld d,_bcout_rows            ;number of rows
+    ld e,_bcout_columns         ;number of columns
+    call MatrixAccess
+    ld hl,output_matrix_name    ;variable name
+    call MatrixZero             ;fill the matrix with zeros
+StatDataInit_noinitoutm:
     ;check for existance of stat data matrices and initialize
     ld hl,mill1_matrix_name
     push hl
@@ -162,7 +182,7 @@ StatDataInit_matrixinit:
 StatDataInit_volconstraintinit:
     ;load in the mill's volume constraint percentage value
     ld a,(vol_constraint_percent);A <- volume constraint percentage
-    call _setXXop1              ;OP1 <- volume constraint percentage
+    call _setXXop1              ;OP1 <- A
     pop hl                      ;mill stat data matrix name
     push hl
     ld d,_statdata_rows         ;last row
@@ -180,9 +200,6 @@ StatDataInit_volconstraintinit:
     ld a,0                  ;databyte array
     call ArrayToMatRow
 
-    ;wherever we are, we also need to sync internal and external data to be safe
-    call writeback
-
     ;return
     jp StatDataInit_return
 StatDataInit_nameinit:
@@ -196,6 +213,9 @@ StatDataInit_nameinit:
     ;return
     jp StatDataInit_return
 StatDataInit_return:
+    ;wherever we are, we also need to sync internal and external data to be safe
+    call writeback
+
     ;return
     ld a,0
     ld (errStatDataMissing_displayed),a
@@ -225,7 +245,8 @@ ErrStatDataMissing: ;if this happens print message and offer two "okay" options
     ld ix,errStatDataMissing_bigmessage
     call bigmessage
     call _getkey
-ErrStatDataMissing_skipdisplay:
+
     call workingmessage
+ErrStatDataMissing_skipdisplay:
     ret
 

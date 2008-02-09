@@ -57,13 +57,13 @@ x test the sum_v calculation bug fix using testprints
 x   - make sure that indexing works properly
 
 
-5.1
+5.1  (4670 lines of code, total)
 x make the cursor moveable in the mill edit window
 x return from printerrors to view the results display again
 x temporarily fix copyover_data incompatibility problems in the helper programs
 
 
-5.2
+5.2  (5430 lines of code, total)
 x write input function
 x   -> for integers, very simple
 x   - write number to DE
@@ -156,7 +156,7 @@ x change clearmenu and clearwindow to restore previous _winTop and _winBtm
 
 
 
-6.0
+6.0  (6708 lines of code, total)
 x add tamper/piracy checking to each helper program
 x consolidate configuration data and settings more
 x clearly differentiate between defines and label references in the code
@@ -540,6 +540,12 @@ x       if I went that direction!
 x fix redo bug in TIBASIC programs
 x   - acting as though it is redoing when it is really not
 x update all program status fields so compile is completely clean
+x fix workingmessage bug
+x   - blots out the mill switching setup screen
+x make sure that volume constraint percentage is updated 
+- fix user-off bug
+    - does not happen in the emulated calculator
+    - only happens when in handoff
 
 
 
@@ -548,6 +554,7 @@ x update all program status fields so compile is completely clean
 - determine pricing to sell the calculator
 
 
+- add option to turn price-skew on or off
 - add the option to choose between tie-breaker methods
     - priority lengths vs. length left in the woods
 - get rid of all LCV 255-termination-centric code
@@ -568,7 +575,6 @@ x           - obfuscation is heavy regarding how to access Input from assembler
         - check for maximum characters
 - check which routines could reference the program global constraints defines 
     and modify them to do so
-- make ResetVolatileData set "it" more elegantly
 - reconsider adding log grade criteria
     - create input in user interface
     - create log_grade input data array
@@ -587,13 +593,8 @@ x           - obfuscation is heavy regarding how to access Input from assembler
     - compute basal area
     - estimate DBH (diameter at breast height)
     -
-- remove the duplicate check from BuckLP2
-    -> this will necessitate a specialized, criteria-based find function
-- write a find function for LCV elements that includes criteria values
-    - take input of length, min/max criteria, and volume group
-    - return status and index
 - update BuckLP2 to use the InputInt function
-- write volume percentage constraint framework
+- test volume percentage constraint framework
 - rewrite BuckInput to operate more like an editor
     - use InputInt
     - write data in a simple form for usercompare mode

@@ -12,11 +12,10 @@
 ;  input:   HL == points to name of matrix excluding type byte (lngth initlzd)
 ;           D  == desired row (starting from 1)
 ;           E  == desired column (starting from 1)
-;           A  -  if A == 1 then write the element
+;           A  -  if A == 1 then write OP1 to the element
 ;                 else if A == 2 then create matrix variable (delete old one)
 ;                 else if A == 3 then output the matrix dimensions to DE
 ;                 else get the element
-;           * if A == 1; then OP1 == number to copy to matrix element
 ;  output:  OP1 == matrix element (not true when A at input is 2 or 3)
 ;           zero flag set if variable does not exist, otherwise reset
 ;           carry flag set if requested element is out of bounds, otw reset

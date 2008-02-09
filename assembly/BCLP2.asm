@@ -52,7 +52,7 @@ LengthPrice:
 ;  input: user keypress input
 ;  output: variables -- LCV, prices
 ;  affects: assume everything 
-;  total: 2335b
+;  total: 2330b
 ;  tested: yes
 ;============================================================
     jp BCLP2 ;just in case!
@@ -1157,10 +1157,6 @@ BCLP2_done_finish_end:
     ;zero out the lengthschange tracking variable and return
     ld a,0
     ld (lengthschange),a
-
-    ;write all volume constraint data
-    ld a,2                      ;volume constraint data only
-    call StatDataInit
 
     ;return
     ret   

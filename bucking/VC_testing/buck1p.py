@@ -7,7 +7,7 @@ import os
 #    buckPCh.prices_reset()
 
 
-def buck1p(Length,Volume,p16,p30,p36,price_adjuster):
+def buck1p(Length,Volume,p16,p30,p36,price_skew):
     Length = Length - (0.8333) 
 
     if Length >= 16:
@@ -22,7 +22,7 @@ def buck1p(Length,Volume,p16,p30,p36,price_adjuster):
         price = 0 
 
     if Length >= 32:
-        price = price * price_adjuster
+        price = price * price_skew
 
     return price
 

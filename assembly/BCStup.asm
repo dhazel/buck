@@ -41,7 +41,7 @@ BCStup:
 ;  input: user keypress input
 ;  output: program branching
 ;  affects: assume everything
-;  total: 1051b
+;  total: 1060b
 ;  tested: yes
 ;============================================================
     jp BCSetup ;just in case!
@@ -322,6 +322,7 @@ BCSetup_mill_edit_return:
     jp BCSetup_mill
 BCSetup_mill_return:
     call save_data
+    call writeback
     jp BCSetup                ;return to BCSetup
 BCSetup_calc:
     ld ix,BCSetup_calc_drawsetup
@@ -382,6 +383,7 @@ BCSetup_calc_changemode_down:
     jp BCSetup_calc_getkey
 BCSetup_calc_return:
     call save_data
+    call writeback
     jp BCSetup                ;return to BCSetup
 BCSetup_stat:
     call BCSetup_drawheader
@@ -445,6 +447,7 @@ BCSetup_stat_down:
     jp BCSetup_stat_getkey
 BCSetup_stat_return:
     call save_data
+    call writeback
     jp BCSetup                ;return to BCSetup
 BCSetup_exit:
     call _clrScrn               ;clear the screen

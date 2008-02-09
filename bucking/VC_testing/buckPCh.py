@@ -17,17 +17,17 @@ def get_prices():
         file = open(sys.path[0]+os.sep+"prices_file.txt", mode='r')
     else:
         file = open(sys.path[0]+os.sep+"prices_file.txt", mode='r')
-    if not os.path.isfile(sys.path[0]+os.sep+"price_adjuster.txt"):
-        price_adjuster_file = open(sys.path[0]+os.sep+"price_adjuster.txt",\
+    if not os.path.isfile(sys.path[0]+os.sep+"price_skew.txt"):
+        price_skew_file = open(sys.path[0]+os.sep+"price_skew.txt",\
                                     mode='w')
-        print >>price_adjuster_file, "1"
-        print >>price_adjuster_file, "1"
-        print >>price_adjuster_file, "1"
-        price_adjuster_file.close()
-        price_adjuster_file = open(sys.path[0]+os.sep+"price_adjuster.txt",\
+        print >>price_skew_file, "1"
+        print >>price_skew_file, "1"
+        print >>price_skew_file, "1"
+        price_skew_file.close()
+        price_skew_file = open(sys.path[0]+os.sep+"price_skew.txt",\
                                     mode='r')
     else:
-        price_adjuster_file = open(sys.path[0]+os.sep+"price_adjuster.txt",\
+        price_skew_file = open(sys.path[0]+os.sep+"price_skew.txt",\
                                     mode='r')
 
     p16 = float(file.readline())
@@ -35,11 +35,11 @@ def get_prices():
     p36 = float(file.readline())
     file.close()
 
-    price_adjuster = float(price_adjuster_file.readline())
-    price_adjuster_file.close()
+    price_skew = float(price_skew_file.readline())
+    price_skew_file.close()
 
     prices = [p16,p30,p36]
-    return (prices,price_adjuster)
+    return (prices,price_skew)
 
 
 def prices_reset():

@@ -7,7 +7,7 @@
 ;  input: vol_constraint_percent
 ;  output: interactive editing of the data field
 ;  affects: TBA
-;  total: 346b
+;  total: 351b
 ;  tested: yes
 ;============================================================
     jp VolPercEd ;just in case!
@@ -130,6 +130,8 @@ VolPercEd_call_clear:
     call VolPercEd_clear
     jp VolPercEd
 VolPercEd_done:
+    ld a,2                  ;volume constraint data only
+    call StatDataInit
     ret
 VolPercEd_edit:
     call clearmenu

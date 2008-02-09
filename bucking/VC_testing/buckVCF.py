@@ -7,53 +7,58 @@ import sys
 import os
 
 # the volume constraint forumula
-def set_price_adjuster():
-    if not os.path.isfile(sys.path[0]+os.sep+"price_adjuster.txt"):
-        price_adjuster_file = open(sys.path[0]+os.sep+"price_adjuster.txt",\
+def set_price_skew(target):
+    if not os.path.isfile(sys.path[0]+os.sep+"price_skew.txt"):
+        price_skew_file = open(sys.path[0]+os.sep+"price_skew.txt",\
                                     mode='w')
-        print >>price_adjuster_file, "1"
-        print >>price_adjuster_file, "1"
-        print >>price_adjuster_file, "1"
-        price_adjuster_file.close()
-        price_adjuster_file = open(sys.path[0]+os.sep+"price_adjuster.txt",\
+        print >>price_skew_file, "1"
+        print >>price_skew_file, "1"
+        print >>price_skew_file, "1"
+        price_skew_file.close()
+        price_skew_file = open(sys.path[0]+os.sep+"price_skew.txt",\
                                     mode='r')
     else:
-        price_adjuster_file = open(sys.path[0]+os.sep+"price_adjuster.txt",\
+        price_skew_file = open(sys.path[0]+os.sep+"price_skew.txt",\
                                     mode='r')
 
-    price_adjuster = float(price_adjuster_file.readline())
-    adjuster_modifier = float(price_adjuster_file.readline())
-    runup_mode = float(price_adjuster_file.readline())
-    price_adjuster_file.close
+    price_skew = float(price_skew_file.readline())
+    adjuster_modifier = float(price_skew_file.readline())
+    runup_mode = float(price_skew_file.readline())
+    price_skew_file.close
 
     (perc_total,perc_group,perc_indiv) = compute_percentages()
 
     # -- calculate price adjuster here -- #
-    if (perc_indiv[len(perc_indiv) - 1] != 80):
-        adjuster_modifier = ((((80 - perc_indiv[len(perc_indiv) - 1])*1)/100))*1
-        if adjuster_modifier > 0:
+    if (perc_indiv[len(perc_indiv) - 1] != target):
+        diff_indiv = (target - perc_indiv[len(perc_indiv) - 1])
+        diff_total = (target - perc_total[len(perc_total) - 1])
+        weighted_diff = (diff_indiv * 0.5) + (diff_total * 0.6)
+        adjuster = (weighted_diff * 0.05)/100
+        if adjuster > 0:
             print
-            print "adjuster_modifier:",adjuster_modifier
-            print "price_adjuster:",price_adjuster
-    elif (perc_indiv[len(perc_indiv) - 1] == 80):
-        adjuster_modifier = 0
+            print "adjuster:",adjuster
+            print "price_skew:",price_skew
+    elif (perc_indiv[len(perc_indiv) - 1] == target):
+        adjuster = 0
 
-    price_adjuster = price_adjuster + adjuster_modifier
+    price_skew = price_skew + adjuster
+    if (price_skew < 1):
+        price_skew = 1
 
-        # NOTES:    - we want to always fall back toward price_adjuster = 1
-        #           - taller trees can converge very well
-        #               - shorter trees (and fewer shippable lengths) offer
-        #                   fewer convergence options and can converge poorly
-        #           - as a rule of thumb, if the price adjuster is >=2 the 
-        #               simple equation is not going to converge
+    # NOTES:    - we want to always fall back toward price_skew = 1
+    #           - taller trees can converge very well
+    #               - shorter trees (and fewer shippable lengths) offer
+    #                   fewer convergence options and can converge poorly
+    #           - as a rule of thumb, if the price adjuster is >=2 the 
+    #               simple equation is not going to converge
     # ----------------------------------- #
 
-    price_adjuster_file = open(sys.path[0]+os.sep+"price_adjuster.txt",\
+    price_skew_file = open(sys.path[0]+os.sep+"price_skew.txt",\
                                 mode='w')
-    print >>price_adjuster_file, price_adjuster
-    print >>price_adjuster_file, adjuster_modifier
-    print >>price_adjuster_file, runup_mode
-    price_adjuster_file.close()
+    print >>price_skew_file, price_skew
+    print >>price_skew_file, adjuster_modifier
+    print >>price_skew_file, runup_mode
+    price_skew_file.close()
 
     return
 
@@ -151,9 +156,14 @@ def track_data(Lf,p1,v1):
 
 
 # the data grapher
-def graph_data():
+def graph_data(target):
     # get y-axis data
     (perc_total,perc_group,perc_indiv) = compute_percentages()
+
+    #remove leading zero, it skews the data representation
+    perc_total.remove(0.0)
+    #perc_group.remove(0.0) #this one doesn't need removing
+    perc_indiv.remove(0.0)
 
     # generate x-axis data
     i = 0
@@ -170,7 +180,7 @@ def graph_data():
 
     # generate x-y target data
     x_target = [0,(len(perc_total))]
-    y_target = [80,80]
+    y_target = [target,target]
 
     # graph the data
     tcl_graph("Volume Constraint Characteristics","Trees","Percent Volume",\

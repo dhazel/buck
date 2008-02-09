@@ -96,7 +96,7 @@ def buck_result_display(gui_mode,Lf,v1,td1,p1,Lf2,v2,td2,p2):
         print
 
 def buck(L,log,log_dia):
-    (prices,price_adjuster) = buckPCh.get_prices()
+    (prices,price_skew) = buckPCh.get_prices()
         
     Li = [L,0,0,0,0,0]              #length iterators
 
@@ -180,7 +180,7 @@ def buck(L,log,log_dia):
         dia = int(dia)      #-->FIXME: Look at this later
         td[s] = dia
         v[s] = logvolume_2.logvolume_2(Li[s],dia)
-        p[s] = buck1p.buck1p(Li[s],v[s],p16,p30,p36,price_adjuster)
+        p[s] = buck1p.buck1p(Li[s],v[s],p16,p30,p36,price_skew)
         Li[s+1] = L - sum(Li)    #bump remaining length ahead
         sum_p = sum(p)
 

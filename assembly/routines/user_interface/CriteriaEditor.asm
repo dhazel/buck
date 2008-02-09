@@ -13,8 +13,8 @@
 ;         A = LCV index for requested log
 ;  output: interactive editing of log criteria
 ;  affects: TBA
-;  total: 1020b
-;  tested: yes 
+;  total: 1025b
+;  tested: yes
 ;============================================================
     jp CriteriaEditor ;just in case!
 CriteriaEditor_wipe_bigmessage_text: .db "Remove all criteria   for this log?",0
@@ -542,9 +542,9 @@ CriteriaEditor_done:
     ld hl,BCLP2_selection_location
     ld (hl),a
 
-    ;NOTE: the volume constraint data will be written out to the statistics
-    ;       matrices when BCStup returns its execution to BC, this makes the 
-    ;       external data consistent with the internal data
+    ;save the data
+    ld a,2                  ;volume constraint data only
+    call StatDataInit
 
     ;return
     ret 

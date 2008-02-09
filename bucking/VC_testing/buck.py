@@ -63,18 +63,21 @@ def process_buck(L1,L2,L3,D0,D1,D2,D3,gui_mode):
 
     #buck0i_1
 
-    os.remove(sys.path[0]+os.sep+"price_adjuster.txt")
+    if os.path.isfile(sys.path[0]+os.sep+"price_skew.txt"):
+        os.remove(sys.path[0]+os.sep+"price_skew.txt")
 
-    i = 20
+    target = 60
+
+    i = 100
     while i > 0:
         (Lf,v1,td1,p1,Lf2,v2,td2,p2) = buck(Length,log_vector,diameter_vector)
-        set_price_adjuster()
+        set_price_skew(target)
         track_data(Lf,p1,v1)
         i = i - 1
 
     buck_result_display(gui_mode,Lf,v1,td1,p1,Lf2,v2,td2,p2)
 
-    graph_data()
+    graph_data(target)
 
     os.remove(sys.path[0]+os.sep+"data.txt")
 

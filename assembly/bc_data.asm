@@ -14,7 +14,7 @@
 ;program versioning data
 #define _version_ID_name    "%btcv600"  ;TIOS variable holding the ID code
 #define _version_ID_code    "aaa000"    ;(6 characters)
-#define _welcome_text       "Bucking             Calculator          ver 6.0 beta" ;the text displayed on the main screen
+#define _welcome_text       "Bucking             Calculator            ver 6.0" ;the text displayed on the main screen
 
 ;program names
 pname_MainBuckingCalculator: .db 4,"BC60"  ;NOTE: also in BCONkeypress.asm !!!

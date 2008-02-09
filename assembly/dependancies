@@ -94,6 +94,7 @@ BCStup.asm
       ArrayAccess_ne 
       StatDataInit 
       save_data 
+      writeback 
       clearwindow 
 bc_userinterface.asm 
    FinMenu : 
@@ -261,6 +262,7 @@ routines/user_interface/CriteriaEditor.asm
       clearmenu 
       menumessage 
       InputInt 
+      StatDataInit 
 routines/user_interface/InputInt.asm 
    InputInt : 
       Mult8to16Bit 
@@ -277,6 +279,7 @@ routines/user_interface/VolPercEd.asm
       menu 
       clearwindow 
       menuhighmessage 
+      StatDataInit 
       clearmenu 
       menumessage 
       InputInt 
@@ -313,8 +316,8 @@ routines/BC/data/save_data.asm
 routines/BC/data/StatDataInit.asm 
    StatDataInit : 
       MatrixAccess 
-      ErrStatDataMissing 
       MatrixZero 
+      ErrStatDataMissing 
       StringCreate 
       ArrayToMatRow 
       writeback 
