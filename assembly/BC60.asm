@@ -21,7 +21,7 @@
 ;
 ;GENERAL notes:
 ;   - Two-byte registers (eg: hl,de,...) are operated as big endian, as opposed 
-;       to the  resident memory which is little endian.
+;       to resident memory which is little endian.
 ;   - Loading memory with the data-word assembler directive (eg: .dw) causes the
 ;       memory to  be loaded in little endian byte order.
 ;   - Modifying the IY register can easily cause massive calculator crashes. IY 

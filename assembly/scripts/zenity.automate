@@ -1,0 +1,9 @@
+#!/bin/bash
+
+zenity --info --text="GENERATED INCLUDE FILES:
+====================
+`cd ../; ./includes_generator`
+
+PROGRAM SIZE CHECK:
+====================
+`cd ../; ./progsize_check`"
