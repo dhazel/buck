@@ -158,7 +158,7 @@ FinMenu_notimplemented:
 ;  output: program branching
 ;  affects: assume everything
 ;  total: 216b
-;  tested: yes
+;  tested: no uncounted
 ;   NOTE: this routine is made to be jumped to
 ;============================================================
     jp BCStart ;just in case
@@ -175,6 +175,11 @@ BCStart:
     call _runindicoff
     
     call _clrScrn
+    
+    ;install the off catcher
+    ; (this will clear the screen if calc turns off)
+    ld a,1              ;regular installation
+    call OffInBC
     
         ld a,7                  ;display welcome text
     ld (_curCol),a
@@ -270,7 +275,7 @@ BCStart_notimplemented:
 ;  output: variables -- log, log_dia, length, Li
 ;  affects: assume everything (I'm lazy right now)
 ;  total: 593b
-;  tested: yes
+;  tested: no uncounted
 ;   NOTE: this routine is made to be called
 ;============================================================
     jp BuckInput ;just in case!
@@ -289,6 +294,11 @@ BuckInput_menu_data:
 
 BuckInput:
     call _clrScrn               ;clear screen
+
+    ;remove the off catcher
+    ; (we want all on-screen data following to remain through an off-cycle)
+    ld a,0                      ;removal
+    call OffInBC
 
     ;clear the input variables
     call ClearInputs
@@ -579,6 +589,7 @@ BuckInput_end:
     
     call _cursoroff             ;turn blinking cursor off
     call _clrScrn
+
     ret                         ;continue on to algorithm
 
 

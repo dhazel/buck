@@ -10,7 +10,7 @@ import os
 def buck1p(Length,Volume,p16,p30,p36,price_skew):
     Length = Length - (0.8333) 
 
-    if Length >= 16:
+    if Length >= 12:
         if Length <= 28:
             price = (Volume/1000) * p16 
         elif Length <= 34:

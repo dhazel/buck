@@ -49,10 +49,6 @@ BC_start:
     call TamperChk
 #endif
     
-    ;install the off catcher
-    ld a,1              ;regular installation
-    call OffInBC
-    
     ;make sure that stat data variables exist in TIOS
     ld a,1              ;re-initialize current mill name variable only
     call StatDataInit   ;this will check all stat data variables

@@ -42,7 +42,8 @@ import os
 import sys
 import Tkinter
 import operator
-from buck_2_2 import *
+from random import randrange
+from buck_2_3 import *
 from buckVCF import *
 import buckPCh
     
@@ -50,14 +51,7 @@ gui_mode = 1
 
 #fig = input('Figure? > ') 
 
-def process_buck(L1,L2,L3,D0,D1,D2,D3,gui_mode):
-    Length = L1+L2+L3                   #setting tree length 
-
-       #Tree descriptor vectors
-    log_vector = [0,L1,(L1 + L2),Length] 
-    diameter_vector = [D0,D1,D2,D3] 
-
-
+def process_buck(L1,L2,D0,D1,D2,ratio,weight,gui_mode):
 
     #CALL NEXT MODULE
 
@@ -68,14 +62,21 @@ def process_buck(L1,L2,L3,D0,D1,D2,D3,gui_mode):
 
     target = 60
 
-    i = 100
+    i = 200
     while i > 0:
-        (Lf,v1,td1,p1,Lf2,v2,td2,p2) = buck(Length,log_vector,diameter_vector)
-        set_price_skew(target)
+        Length = randrange(L1,L2)                 #setting tree length 
+
+           #Tree descriptor vectors
+        log_vector = [0,Length] 
+        diameter_vector = [D0,randrange(D1,D2)] 
+
+        # calculations
+        (Lf,v1,td1,p1,Lf2,v2,td2,p2) = buck2(Length,log_vector,diameter_vector)
+        set_price_skew(target,ratio,weight)
         track_data(Lf,p1,v1)
         i = i - 1
 
-    buck_result_display(gui_mode,Lf,v1,td1,p1,Lf2,v2,td2,p2)
+#    buck_result_display(gui_mode,Lf,v1,td1,p1,Lf2,v2,td2,p2)
 
     graph_data(target)
 
@@ -96,65 +97,58 @@ def text_mode_buck():
     y=1 
     run=0 
     L2=0 
-    L3=0 
     D0=0 
     D1=0 
     D2=0 
-    D3=0 
 
     D0 = float(input('Enter Butt Diameter:  '))           #Get Inputs
 
-    L1 = float(input('Enter First Length:  ')) 
+    L1 = float(input('Enter Minimum Length:  ')) 
     #L1=L1+0.8333 
-    D1 = float(input('Enter End Diameter:  '))
+    D1 = float(input('Enter Minimum Diameter:  '))
     run=input('Account for diameter reduction?:  ') 
-    if run == yes:
-        L2 = float(input('Enter Second Length:  '))
-    #    L2=L2+0.8333 
-        D2 = float(input('Enter End Diameter:  '))
-        run=input('Account for another diameter reduction?:  ') 
-        if run==yes:
-            L3 = float(input('Enter Third Length:  '))
-    #        L3=L3+0.8333 
-            D3 = float(input('Enter End Diameter:  '))
-
-    process_buck(L1,L2,L3,D0,D1,D2,D3,gui_mode=0)
+    L2 = float(input('Enter Maximum Length:  '))
+#    L2=L2+0.8333 
+    D2 = float(input('Enter Maximum Diameter:  '))
+    
+    process_buck(L1,L2,D0,D1,D2,gui_mode=0)
 
 
 
 def gui_process_buck():
     L1 = (L1_entry.get())
     L2 = (L2_entry.get())
-    L3 = (L3_entry.get())
     D0 = (D0_entry.get())
     D1 = (D1_entry.get())
     D2 = (D2_entry.get())
-    D3 = (D3_entry.get())
+    ratio = (ratio_entry.get())
+    weight = (weight_entry.get())
 
+    # default values
     if L1 == "":
         L1 = 0
     if L2 == "":
         L2 = 0
-    if L3 == "":
-        L3 = 0
     if D0 == "":
         D0 = 0
     if D1 == "":
         D1 = 0
     if D2 == "":
         D2 = 0
-    if D3 == "":
-        D3 = 0
+    if ratio == "":     # these numbers seem to work well for ratio and weight
+        ratio = 0.7
+    if weight == "":
+        weight = 0.15
     
     L1 = float(L1)
     L2 = float(L2)
-    L3 = float(L3)
     D0 = float(D0)
     D1 = float(D1)
     D2 = float(D2)
-    D3 = float(D3)
+    ratio = float(ratio)
+    weight = float(weight)
 
-    process_buck(L1,L2,L3,D0,D1,D2,D3,gui_mode) 
+    process_buck(L1,L2,D0,D1,D2,ratio,weight,gui_mode) 
 
 def gui_manage_prices():
     os.system(os.sep+"usr"+os.sep+"bin"+os.sep+"python "+sys.path[0]+os.sep+"buckPCh_g.py &")
@@ -169,7 +163,7 @@ if gui_mode == 1 :  #FIXME: set back to 1 after testing
 
 
     root = Tkinter.Tk()
-    root.geometry('300x240+350+70')
+    root.geometry('400x240+350+70')
     root.title('Buck-Length Calculator')
 
     welcome = Tkinter.Label(text="Welcome to the buck-length calculator!")
@@ -177,31 +171,29 @@ if gui_mode == 1 :  #FIXME: set back to 1 after testing
     Tkinter.Label(text="Enter Butt Diameter: ").grid(row=1,column=0)
     D0_entry = Tkinter.Entry(background='white')
 
-    Tkinter.Label(text="Enter First Length: ").grid(row=2,column=0)
+    Tkinter.Label(text="Enter Minimum Length: ").grid(row=2,column=0)
     L1_entry = Tkinter.Entry(background='white')
-    Tkinter.Label(text="Enter End Diameter: ").grid(row=3,column=0)
-    D1_entry = Tkinter.Entry(background='white')
-    Tkinter.Label(text="Enter Second Length: ").grid(row=4,column=0)
+    Tkinter.Label(text="Enter Maximum Length: ").grid(row=3,column=0)
     L2_entry = Tkinter.Entry(background='white')
-    Tkinter.Label(text="Enter End Diameter: ").grid(row=5,column=0)
+    Tkinter.Label(text="Enter Minimum Diameter: ").grid(row=4,column=0)
+    D1_entry = Tkinter.Entry(background='white')
+    Tkinter.Label(text="Enter Maximum Diameter: ").grid(row=5,column=0)
     D2_entry = Tkinter.Entry(background='white')
-    Tkinter.Label(text="Enter Third Length: ").grid(row=6,column=0)
-    L3_entry = Tkinter.Entry(background='white')
-    Tkinter.Label(text="Enter End Diameter: ").grid(row=7,column=0)
-    D3_entry = Tkinter.Entry(background='white')
+    Tkinter.Label(text="Enter Converge vs Response Ratio: ").grid(row=6,column=0)
+    ratio_entry = Tkinter.Entry(background='white')
+    Tkinter.Label(text="Enter Response Weight: ").grid(row=7,column=0)
+    weight_entry = Tkinter.Entry(background='white')
 
-    calcbutton = Tkinter.Button(text="Calculate Lengths", command=gui_process_buck, activebackground='orange')
-    Tkinter.Button(text="Change Prices", command=gui_manage_prices).grid(row=8,column=0)
-    Tkinter.Button(text="Your guesses...", command=gui_your_logs).grid(row=9,column=0)
+    calcbutton = Tkinter.Button(text="Calculate", command=gui_process_buck, activebackground='orange')
 
     welcome.grid(row=0, column=0, columnspan=3, pady=5)
     D0_entry.grid(row=1,column=1)
     L1_entry.grid(row=2,column=1)
-    D1_entry.grid(row=3,column=1)
-    L2_entry.grid(row=4,column=1)
+    L2_entry.grid(row=3,column=1)
+    D1_entry.grid(row=4,column=1)
     D2_entry.grid(row=5,column=1)
-    L3_entry.grid(row=6,column=1)
-    D3_entry.grid(row=7,column=1)
+    ratio_entry.grid(row=6,column=1)
+    weight_entry.grid(row=7,column=1)
     calcbutton.grid(row=8,column=1,pady=10,rowspan=2)
 
 #   D0_entry.insert(0, '0')

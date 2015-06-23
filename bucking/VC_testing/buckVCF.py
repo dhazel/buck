@@ -7,7 +7,7 @@ import sys
 import os
 
 # the volume constraint forumula
-def set_price_skew(target):
+def set_price_skew(target,converge_vs_response_ratio,response_weight):
     if not os.path.isfile(sys.path[0]+os.sep+"price_skew.txt"):
         price_skew_file = open(sys.path[0]+os.sep+"price_skew.txt",\
                                     mode='w')
@@ -32,8 +32,8 @@ def set_price_skew(target):
     if (perc_indiv[len(perc_indiv) - 1] != target):
         diff_indiv = (target - perc_indiv[len(perc_indiv) - 1])
         diff_total = (target - perc_total[len(perc_total) - 1])
-        weighted_diff = (diff_indiv * 0.5) + (diff_total * 0.6)
-        adjuster = (weighted_diff * 0.05)/100
+        weighted_diff = (diff_indiv * (1 - converge_vs_response_ratio)) + (diff_total * converge_vs_response_ratio)
+        adjuster = (weighted_diff * response_weight)/100
         if adjuster > 0:
             print
             print "adjuster:",adjuster

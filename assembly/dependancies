@@ -107,16 +107,17 @@ bc_userinterface.asm
       TestPrints 
       VarDump 
       menuhighmessage 
-   BCStart : 
+   BCStart :   !!! untested !!!   >>> uncounted <<< 
+      OffInBC 
       menu 
       Handoff_BCStup 
       AboutBuck 
-      OffInBC 
       BC_basic_calculate 
       BC_usercompare_calculate 
       BC_millcompare_calculate 
       menuhighmessage 
-   BuckInput : 
+   BuckInput :   !!! untested !!!   >>> uncounted <<< 
+      OffInBC 
       ClearInputs 
       menu 
       clearmenumessage 

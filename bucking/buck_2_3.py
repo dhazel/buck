@@ -50,7 +50,7 @@ def buck2(L,log,log_dia,gui_mode):
     Li = [L,0,0,0,0,0]              #length iterators
 
                                     #Lengths-to-Check Vector 
-    LCV = [19,21,23,25,29,31,33,35,39,41,17,27,37]
+    LCV = [12,13,22,30,32,38,17,26,34]
 
     p16 = prices[0]
     p30 = prices[1]

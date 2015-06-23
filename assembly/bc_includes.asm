@@ -128,6 +128,7 @@ _scrollDown         equ     4A7Ah   ; scroll screen down
 
 
 ;TIOS FLAGS---------------------------------------------------------
+;(used with the iy register)
 textflags           equ     $05     ; TI-OS text flags offset 
 textinverse         equ     3       ; TI-OS text-inverse flag offset
 

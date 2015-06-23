@@ -65,15 +65,15 @@ TamperChk_firstrun_status: .db 1        ;set if program has never run before
 lengthschange: .db 0        ;set if lengths changed during call to BCStup
 
 ;multiple mills-----------------------------------------------
-mill1_name: .db "mill a  ",0  ;NOTE: ALL mill name data regions must same size
+mill1_name: .db "freres  ",0  ;NOTE: ALL mill name data regions must same size
 mill1_number: .db 0
 mill1_distance: .db 0
 prices_mill1: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-LCV_mill1: .db 1,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255
-minmax_td_mill1: .dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
-vol_constrain_mill1: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;volume criteria
-vol_constraint_percent_mill1: .db 0 ;minimum production for constrained logs
-mill1_LCV_size: .db 0 ;number of elements (starting from 0) in the LCV
+LCV_mill1: .db 13,14,23,31,33,39,18,27,35,255,0,0,0,0,0,0,0,0,0,0,255
+minmax_td_mill1: .dw 8,8,8,8,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;min/max td critria
+vol_constrain_mill1: .db 0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0;volume criteria
+vol_constraint_percent_mill1: .db 60 ;minimum production for constrained logs
+mill1_LCV_size: .db 8 ;number of elements (starting from 0) in the LCV
 mill2_name: .db "rsg     ",0  
 mill2_number: .db 1
 mill2_distance: .db 0

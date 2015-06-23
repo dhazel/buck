@@ -17,9 +17,14 @@ def buck1p(Length,Volume,p16,p30,p36):
             price = (Volume/1000) * p30 
         elif Length <= 40:
             price = (Volume/1000) * p36 
+        else:
+            print 'Error: Log is wrong length!'
+            price = 0
     else:
         print 'Error: Log is wrong length!'
         price = 0 
+
+    price = (Volume/1000) * 500
 
     return price
 

@@ -543,10 +543,14 @@ x update all program status fields so compile is completely clean
 x fix workingmessage bug
 x   - blots out the mill switching setup screen
 x make sure that volume constraint percentage is updated 
-- fix user-off bug
-    - does not happen in the emulated calculator
-    - only happens when in handoff
 
+6.1
+- fix user-off bugs
+    - during tree input
+- fix stale data bcout error
+    - re-word it 
+        - (like) "The calculator failed to load the previous tree into statistics!"
+    - turn interrupts off during bcstat execution, so this error is less likely
 
 
 
