@@ -3,23 +3,23 @@ ___BUCKING ASSEMBLY README___
 
 About the code:
 
-The bucking assembly language program is written using the 
-"Assembly Studio 8X" IDE provided by "Assembly Coder's Zenith" (ACZ), and 
-it is written for the TI86 Texas Instruments Graphing Calculator, which 
-uses the Z80 micro-processor. Assembly Studio 8X uses the Telemark Assembler 
-(TASM), not be be confused with Borland's Turbo Assembler. The source code 
-used by Assembly Studio 8X is *NOT* fully compatible with TASM and must be 
+The bucking assembly language program is written using the
+"Assembly Studio 8X" IDE provided by "Assembly Coder's Zenith" (ACZ), and
+it is written for the TI86 Texas Instruments Graphing Calculator, which
+uses the Z80 micro-processor. Assembly Studio 8X uses the Telemark Assembler
+(TASM), not be be confused with Borland's Turbo Assembler. The source code
+used by Assembly Studio 8X is *NOT* fully compatible with TASM and must be
 slightly modified to compile without the IDE.
 
 
 About the program:
 
-The bucking program is designed to take inputs such as a tree's length and 
-diameter, mill prices, and mill prefered log lengths; and from that, the 
-program quickly computes optimal lengths at which to buck the tree into 
-logs. 
+The bucking program is designed to take inputs such as a tree's length and
+diameter, mill prices, and mill prefered log lengths; and from that, the
+program quickly computes optimal lengths at which to buck the tree into
+logs.
 
-With additional inputs of mill distances and trucking costs the 
+With additional inputs of mill distances and trucking costs the
 program might also be extended to recommend which mill to use.
 
 
@@ -39,22 +39,22 @@ Changelog:
 		algorithm, however, the internal iterative search framework
 		is buggy and ocassionally returns bad results
 	- no user interface, must be reloaded before each run
-	
+
 - version 1.5.0 beta
 	- complete implementation of the much improved version 1.5.0 bucking
 			algorithm
 		- massive changes to the iterative search control flow
 		* From the algorithm readme:
-		- possible log lengths are now stored in an array rather 
+		- possible log lengths are now stored in an array rather
 		    than being determined mathematically
 		- now capable of handling different mills (eg, the framework
-		    can now handle *any* possible log length rather than 
-		    just multiples of 2 within the boundaries of 16 and 40 
-		    feet) 
-		    - NOTE: this is not supported by the price and volume 
-		        functions yet, they are still constrained to the 
+		    can now handle *any* possible log length rather than
+		    just multiples of 2 within the boundaries of 16 and 40
+		    feet)
+		    - NOTE: this is not supported by the price and volume
+		        functions yet, they are still constrained to the
 		        16-40' boundaries
-		- log priority can now be specified based on position in 
+		- log priority can now be specified based on position in
 		    the array
 		- more robust, not as finnicky regarding loop conditions
 	- several bug fixes in the data copy section
@@ -65,37 +65,37 @@ Changelog:
 		- basic functionality works
 	- no need to reload before each run
 		- program automatically resets volatile data
-		
+
 - version 3.0.0
 	- user interface received extensive fleshing out
-		- start, about, setup, and final display screens 
+		- start, about, setup, and final display screens
 			implemented
-	- statistics, mill, and calculation options are visible to the 
+	- statistics, mill, and calculation options are visible to the
 			user but are not yet implemented
 	- price checking algorithm rewritten to work better with version
 			1.5.0 of the bucking algorithm
 		- less code
-		- more versatile with price per length rather than 
+		- more versatile with price per length rather than
 			price per length-range
-		- capable of hooking into the bucking algorithm to 
+		- capable of hooking into the bucking algorithm to
 			increase total program speed
 	- log prices and mill prefered lengths can now be changed at runtime
-	- this is the first version implementing enough of the planned 
+	- this is the first version implementing enough of the planned
 		features to be considered production ready
-		
+
 - version 3.0.1
 	- user interface improvements
 		- 'x' placed after each zero-price log in the data printout
 			to designate firewood/non-mill/cull logs
-			
+
 - version 3.1.0
 	- increased code modularity and cleaned up appearance
 		- price, iterator, and volume sections are now separate
 			subroutines
-		- placed data and all conceptually separate sections of 
+		- placed data and all conceptually separate sections of
 			code in separate include files, thus increasing
 			the readability of the main bucking algorithm
-	
+
 - version (may have missed a couple here)
 
 
@@ -124,7 +124,7 @@ Changelog:
     - this was an unplanned major change to the program
         - ran out of space and needed more in order to add features
         - the bucking calculator now requires helper programs
-            - specifically, BuckLP2, once a subroutine, is now an external 
+            - specifically, BuckLP2, once a subroutine, is now an external
                 helper program that enables length and price editing
     - BuckLP2 was optimized to avoid display redraw flicker
     - a tree's bucked volume can now be viewed by pressing the <MORE> key
@@ -133,7 +133,7 @@ Changelog:
 - version 5.0.0
     - added statistics tracking
         - wrote special data structure for handling result data
-        - rewrote FinDisplay and modified several other routines to use the 
+        - rewrote FinDisplay and modified several other routines to use the
             data structure
         - wrote special BuckStat statistics helper program
         - wrote setup routine that can turn statistics on/off
