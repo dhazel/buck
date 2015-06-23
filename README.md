@@ -1,17 +1,6 @@
 ___BUCKING ASSEMBLY README___
 
 
-#About the code:
-
-The bucking assembly language program is written using the
-"Assembly Studio 8X" IDE provided by "Assembly Coder's Zenith" (ACZ), and
-it is written for the TI86 Texas Instruments Graphing Calculator, which
-uses the Z80 micro-processor. Assembly Studio 8X uses the Telemark Assembler
-(TASM), not be be confused with Borland's Turbo Assembler. The source code
-used by Assembly Studio 8X is *NOT* fully compatible with TASM and must be
-slightly modified to compile without the IDE.
-
-
 #About the program:
 
 The bucking program is designed to take inputs such as a tree's length and
@@ -28,6 +17,16 @@ program might also be extended to recommend which mill to use.
 * Language - Assembly Studio 8X, Z80 assembly
 * Platform - Texas Instruments TI86 graphing calculator
 * Functionality - Compute optimal lengths at which to buck a tree into logs
+
+#About the code:
+
+The bucking assembly language program is written using the
+"Assembly Studio 8X" IDE provided by "Assembly Coder's Zenith" (ACZ), and
+it is written for the TI86 Texas Instruments Graphing Calculator, which
+uses the Z80 micro-processor. Assembly Studio 8X uses the Telemark Assembler
+(TASM), not be be confused with Borland's Turbo Assembler. The source code
+used by Assembly Studio 8X is *NOT* fully compatible with TASM and must be
+slightly modified to compile without the IDE.
 
 
 #Changelog:
